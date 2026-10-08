@@ -9,7 +9,7 @@ import Footer from "../components/layout/Footer";
 import Container from "../components/common/Container";
 import Button from "../components/common/Button";
 
-import doctorImage from "../assets/images/doctor.webp";
+import doctorImage from "../assets/images/Dr-Pranita.webp";
 
 function Doctor() {
   return (
@@ -59,7 +59,7 @@ function Doctor() {
 
                 <div className="mt-9 grid gap-4 sm:grid-cols-3">
                   {[
-                    [GraduationCap, "M.D. (Hom)"],
+                    [GraduationCap, "M.D. (Hom), Nutritionist"],
                     [Award, "9+ Years Clinical Experience"],
                     [HeartHandshake, "Personalised, thoughtful care"],
                   ].map(([Icon, label]) => (

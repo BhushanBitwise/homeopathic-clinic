@@ -40,7 +40,7 @@ function DoctorPreview() {
                   </p>
 
                   <p className="text-sm font-semibold text-slate-900">
-                    BHMS
+                    M.D. (Hom), Nutritionist
                   </p>
                 </div>
               </div>
@@ -65,9 +65,7 @@ function DoctorPreview() {
             </div>
 
             <p className="mt-6 max-w-xl text-sm leading-7 text-slate-600">
-              With a patient-first consultation approach, every visit is
-              centered around understanding health history, lifestyle and
-              individual concerns.
+              Dr. Pranita Kanade is a highly qualified and experienced Homeopathic physician and Nutritionist with over 9 years of clinical practice. She is dedicated to providing holistic and personalized medical care, focusing on treating the root cause of ailments.
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">

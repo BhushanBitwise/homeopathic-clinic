@@ -433,7 +433,7 @@ import {
 import Container from "../common/Container";
 import Button from "../common/Button";
 
-import doctorImage from "../../assets/images/doctor.webp";
+import doctorImage from "../../assets/images/Dr-Pranita.webp";
 
 preload(doctorImage, {
   as: "image",
