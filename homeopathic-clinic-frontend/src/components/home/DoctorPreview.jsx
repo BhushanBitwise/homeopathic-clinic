@@ -8,7 +8,7 @@ import Container from "../common/Container";
 import Button from "../common/Button";
 import SectionHeading from "../common/SectionHeading";
 
-import doctorImage from "../../assets/images/doctor2.webp";
+import doctorImage from "../../assets/images/Dr-Pranita.webp";
 
 function DoctorPreview() {
   return (
