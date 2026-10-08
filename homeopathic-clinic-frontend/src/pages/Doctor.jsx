@@ -59,8 +59,8 @@ function Doctor() {
 
                 <div className="mt-9 grid gap-4 sm:grid-cols-3">
                   {[
-                    [GraduationCap, "BHMS"],
-                    [Award, "8+ Years of Clinical Experience"],
+                    [GraduationCap, "M.D. (Hom)"],
+                    [Award, "9+ Years Clinical Experience"],
                     [HeartHandshake, "Personalised, thoughtful care"],
                   ].map(([Icon, label]) => (
                     <div

@@ -60,7 +60,7 @@ function DoctorPreview() {
               </h3>
 
               <p className="mt-2 text-sm font-medium text-emerald-800">
-                BHMS · Homeopathic Physician & Wellness Consultant
+                M.D. (Hom), Nutritionist
               </p>
             </div>
 
@@ -78,7 +78,7 @@ function DoctorPreview() {
                 />
 
                 <p className="mt-4 text-sm font-semibold text-slate-900">
-                  Professional expertise
+                  9+ Years Clinical Experience
                 </p>
 
                 <p className="mt-2 text-xs leading-5 text-slate-500">
