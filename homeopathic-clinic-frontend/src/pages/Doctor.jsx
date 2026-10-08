@@ -44,11 +44,11 @@ function Doctor() {
                 </p>
 
                 <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-6xl">
-                  Dr. Aarav Mehta
+                  Dr. Pranita Kanade
                 </h1>
 
                 <p className="mt-3 font-medium text-emerald-800">
-                  BHMS · Homeopathic Physician & Wellness Consultant
+                  M.D. (Hom), Nutritionist 
                 </p>
 
                 <p className="mt-7 max-w-xl text-base leading-7 text-slate-600">

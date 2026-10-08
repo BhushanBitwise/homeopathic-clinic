@@ -56,7 +56,7 @@ function DoctorPreview() {
 
             <div className="mt-8">
               <h3 className="text-2xl font-semibold tracking-tight text-slate-950">
-                Dr. Aarav Mehta
+                Dr. Pranita Kanade
               </h3>
 
               <p className="mt-2 text-sm font-medium text-emerald-800">
