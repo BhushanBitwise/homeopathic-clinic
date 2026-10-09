@@ -12,10 +12,11 @@ import doctors from "../data/doctors";
 const DESKTOP_PAGE_SIZE = 9;
 const MOBILE_PAGE_SIZE = 6;
 
-const DoctorCard = memo(function DoctorCard({ doctor }) {
-  const [imageFailed, setImageFailed] = useState(false);
+const selectClass =
+  "min-h-12 w-full min-w-0 rounded-xl border border-slate-200 bg-[#f8faf8] px-3 text-sm text-slate-700 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10";
 
-  const initials = (doctor.name || "Doctor")
+function getInitials(name = "") {
+  return name
     .replace(/^Dr\.\s*/i, "")
     .split(/\s+/)
     .filter(Boolean)
@@ -23,50 +24,61 @@ const DoctorCard = memo(function DoctorCard({ doctor }) {
     .map((part) => part[0])
     .join("")
     .toUpperCase();
+}
+
+function getExperienceYears(experience = "") {
+  return Number(String(experience).match(/\d+/)?.[0] || 0);
+}
+
+const DoctorCard = memo(function DoctorCard({ doctor }) {
+  const [imageFailed, setImageFailed] = useState(false);
 
   return (
-    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-slate-200/80 bg-white shadow-[0_3px_16px_rgba(18,55,42,0.035)] transition-colors duration-200 hover:border-emerald-800/30">
-      {/* Consistent image frame across all cards */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#e7f2eb]">
+    <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-colors duration-150 hover:border-emerald-800/25">
+      {/* Portrait image: gives the face and shoulders more room */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-[#e7f2eb]">
         {!imageFailed && doctor.image ? (
           <img
             src={doctor.image}
             alt={doctor.name}
             width="600"
-            height="450"
+            height="750"
             loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
-            className="absolute inset-0 block h-full w-full object-cover"
+            className="block h-full w-full object-cover"
             style={{
-              objectPosition: doctor.objectPosition || "center center",
+              objectPosition: doctor.objectPosition || "center 20%",
             }}
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-emerald-900">
-            <span className="grid size-16 place-items-center rounded-full border border-emerald-900/10 bg-white text-xl font-semibold">
-              {initials}
+          <div
+            className="flex h-full flex-col items-center justify-center gap-3 text-emerald-900"
+            role="img"
+            aria-label={`Image unavailable for ${doctor.name}`}
+          >
+            <span className="grid size-16 place-items-center rounded-full bg-white text-2xl font-semibold">
+              {getInitials(doctor.name)}
             </span>
-            <span className="text-sm font-medium">Doctor profile</span>
+            <span className="text-sm font-medium">
+              Doctor profile
+            </span>
           </div>
         )}
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950/15 to-transparent" />
-
         {doctor.qualification && (
-          <span className="absolute left-4 top-4 max-w-[calc(100%-2rem)] truncate rounded-full border border-white/70 bg-white/95 px-3 py-2 text-xs font-semibold text-emerald-900 shadow-sm">
+          <span className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] truncate rounded-full border border-white/70 bg-white/95 px-3 py-1.5 text-xs font-semibold text-emerald-900">
             {doctor.qualification}
           </span>
         )}
       </div>
 
-      {/* Card content */}
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <p className="text-[11px] font-bold uppercase leading-5 tracking-[0.14em] text-emerald-800 sm:text-xs">
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.1em] leading-5 text-emerald-800">
           {doctor.role}
         </p>
 
-        <h2 className="mt-2 break-words text-xl font-semibold tracking-tight text-slate-950 sm:text-[1.35rem]">
+        <h2 className="mt-2 break-words text-xl font-semibold tracking-tight text-slate-950">
           {doctor.name}
         </h2>
 
@@ -78,13 +90,13 @@ const DoctorCard = memo(function DoctorCard({ doctor }) {
 
         <div className="mt-4 flex flex-wrap gap-2">
           {doctor.experience && (
-            <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-900">
+            <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-900">
               {doctor.experience}
             </span>
           )}
 
           {doctor.availability && (
-            <span className="rounded-full bg-[#f3f5f2] px-3 py-1.5 text-xs font-medium text-slate-600">
+            <span className="rounded-full bg-[#f1f4f1] px-3 py-1.5 text-xs text-slate-600">
               {doctor.availability}
             </span>
           )}
@@ -96,15 +108,13 @@ const DoctorCard = memo(function DoctorCard({ doctor }) {
           </p>
         )}
 
-        <div className="mt-auto pt-6">
-          <Link
-            to="/appointment"
-            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#145c43] px-4 py-3 text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#104b37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
-          >
-            Book an appointment
-            <span aria-hidden="true">→</span>
-          </Link>
-        </div>
+        <Link
+          to="/appointment"
+          className="mt-auto mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#145c43] px-4 py-3 text-center text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#104b37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+        >
+          Book an appointment
+          <span aria-hidden="true">→</span>
+        </Link>
       </div>
     </article>
   );
@@ -112,15 +122,15 @@ const DoctorCard = memo(function DoctorCard({ doctor }) {
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
   const pages = useMemo(() => {
-    const candidates = [
+    const visiblePages = new Set([
       1,
+      totalPages,
       currentPage - 1,
       currentPage,
       currentPage + 1,
-      totalPages,
-    ];
+    ]);
 
-    return [...new Set(candidates)]
+    return [...visiblePages]
       .filter((page) => page >= 1 && page <= totalPages)
       .sort((a, b) => a - b);
   }, [currentPage, totalPages]);
@@ -128,32 +138,32 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
 
   const buttonClass =
-    "inline-flex min-h-11 items-center justify-center rounded-full border px-3 sm:px-4 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
+    "inline-flex min-h-11 items-center justify-center rounded-full border px-3 sm:px-4 text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
 
   return (
     <nav
       aria-label="Doctor pagination"
-      className="mt-9 flex flex-wrap items-center justify-center gap-2"
+      className="mt-8 flex flex-wrap items-center justify-center gap-2"
     >
       <button
         type="button"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
-        className={`${buttonClass} border-slate-200 bg-white text-slate-700`}
+        className={`${buttonClass} border-slate-200 bg-white text-slate-700 hover:bg-emerald-50`}
       >
         Previous
       </button>
 
       {pages.map((page, index) => {
         const previousPage = pages[index - 1];
-        const needsEllipsis =
+        const showEllipsis =
           previousPage && page - previousPage > 1;
-        const isActive = page === currentPage;
+        const active = page === currentPage;
 
         return (
           <span key={page} className="flex items-center gap-2">
-            {needsEllipsis && (
-              <span className="text-slate-400" aria-hidden="true">
+            {showEllipsis && (
+              <span aria-hidden="true" className="text-slate-400">
                 …
               </span>
             )}
@@ -161,12 +171,12 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
             <button
               type="button"
               aria-label={`Go to page ${page}`}
-              aria-current={isActive ? "page" : undefined}
+              aria-current={active ? "page" : undefined}
               onClick={() => onPageChange(page)}
               className={`${buttonClass} ${
-                isActive
+                active
                   ? "border-[#145c43] bg-[#145c43] text-white"
-                  : "border-slate-200 bg-white text-slate-700"
+                  : "border-slate-200 bg-white text-slate-700 hover:bg-emerald-50"
               }`}
             >
               {page}
@@ -179,7 +189,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         type="button"
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-        className={`${buttonClass} border-slate-200 bg-white text-slate-700`}
+        className={`${buttonClass} border-slate-200 bg-white text-slate-700 hover:bg-emerald-50`}
       >
         Next
       </button>
@@ -194,26 +204,31 @@ export default function Doctor() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(DESKTOP_PAGE_SIZE);
 
+  // Adapt pagination to viewport size.
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 639px)");
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
 
-    const updateSize = () => {
+    const updatePageSize = () => {
       setPageSize(
-        media.matches ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE
+        mediaQuery.matches ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE
       );
     };
 
-    updateSize();
-    media.addEventListener("change", updateSize);
+    updatePageSize();
+    mediaQuery.addEventListener("change", updatePageSize);
 
-    return () => media.removeEventListener("change", updateSize);
+    return () => {
+      mediaQuery.removeEventListener("change", updatePageSize);
+    };
   }, []);
 
   const specializations = useMemo(
     () =>
       [
         ...new Set(
-          doctors.map((doctor) => doctor.specialization).filter(Boolean)
+          doctors
+            .map((doctor) => doctor.specialization)
+            .filter(Boolean)
         ),
       ].sort(),
     []
@@ -223,7 +238,7 @@ export default function Doctor() {
     const query = search.trim().toLowerCase();
 
     const result = doctors.filter((doctor) => {
-      const text = [
+      const searchableText = [
         doctor.name,
         doctor.qualification,
         doctor.role,
@@ -233,23 +248,20 @@ export default function Doctor() {
         .join(" ")
         .toLowerCase();
 
-      return (
-        text.includes(query) &&
-        (specialization === "all" ||
-          doctor.specialization === specialization)
-      );
+      const matchesSearch = searchableText.includes(query);
+      const matchesSpecialization =
+        specialization === "all" ||
+        doctor.specialization === specialization;
+
+      return matchesSearch && matchesSpecialization;
     });
 
     if (sortBy === "experience") {
-      return result.sort((a, b) => {
-        const yearsA = Number(
-          String(a.experience || "").match(/\d+/)?.[0] || 0
-        );
-        const yearsB = Number(
-          String(b.experience || "").match(/\d+/)?.[0] || 0
-        );
-        return yearsB - yearsA;
-      });
+      return result.sort(
+        (a, b) =>
+          getExperienceYears(b.experience) -
+          getExperienceYears(a.experience)
+      );
     }
 
     return result.sort((a, b) =>
@@ -270,6 +282,26 @@ export default function Doctor() {
     [filteredDoctors, startIndex, pageSize]
   );
 
+  const hasActiveFilters =
+    search.trim() !== "" ||
+    specialization !== "all" ||
+    sortBy !== "name";
+
+  function handleSearch(value) {
+    setSearch(value);
+    setCurrentPage(1);
+  }
+
+  function handleSpecialization(value) {
+    setSpecialization(value);
+    setCurrentPage(1);
+  }
+
+  function handleSort(value) {
+    setSortBy(value);
+    setCurrentPage(1);
+  }
+
   function resetFilters() {
     setSearch("");
     setSpecialization("all");
@@ -277,22 +309,12 @@ export default function Doctor() {
     setCurrentPage(1);
   }
 
-  const hasFilters =
-    search.trim() !== "" ||
-    specialization !== "all" ||
-    sortBy !== "name";
-
-  const searchWrapper =
-    "flex min-h-12 min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-[#f8faf8] px-4 focus-within:border-emerald-700 focus-within:ring-4 focus-within:ring-emerald-700/10";
-
-  const selectClass =
-    "min-h-12 w-full min-w-0 rounded-xl border border-slate-200 bg-[#f8faf8] px-3 text-sm text-slate-700 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10";
-
   return (
     <div className="min-h-screen overflow-x-clip bg-[#f8faf8]">
       <Navbar />
 
       <main className="pt-24 sm:pt-28">
+        {/* Heading */}
         <section className="border-b border-slate-200 bg-white py-12 sm:py-16 lg:py-20">
           <Container>
             <div className="mx-auto max-w-3xl text-center">
@@ -320,7 +342,8 @@ export default function Doctor() {
           <Container>
             <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(190px,0.55fr)_minmax(180px,0.45fr)]">
-                <div className={searchWrapper}>
+                {/* Rounded wrapper owns the focus ring; no hover styling */}
+                <div className="flex min-h-12 min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-[#f8faf8] px-4 focus-within:border-emerald-700 focus-within:ring-4 focus-within:ring-emerald-700/10">
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -350,22 +373,17 @@ export default function Doctor() {
                     id="doctor-search"
                     type="search"
                     value={search}
-                    onChange={(event) => {
-                      setSearch(event.target.value);
-                      setCurrentPage(1);
-                    }}
+                    onChange={(event) => handleSearch(event.target.value)}
                     placeholder="Search doctors..."
                     autoComplete="off"
+                    spellCheck={false}
                     className="!m-0 !min-w-0 !w-full !flex-1 !rounded-none !border-0 !bg-transparent !px-0 !py-3 !shadow-none text-sm text-slate-900 placeholder:text-slate-400 !outline-none !ring-0 focus:!border-0 focus:!outline-none focus:!ring-0 focus:!shadow-none"
                   />
 
                   {search && (
                     <button
                       type="button"
-                      onClick={() => {
-                        setSearch("");
-                        setCurrentPage(1);
-                      }}
+                      onClick={() => handleSearch("")}
                       aria-label="Clear search"
                       className="shrink-0 rounded-lg px-2 py-1.5 text-xs font-semibold text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
                     >
@@ -380,10 +398,9 @@ export default function Doctor() {
                   </span>
                   <select
                     value={specialization}
-                    onChange={(event) => {
-                      setSpecialization(event.target.value);
-                      setCurrentPage(1);
-                    }}
+                    onChange={(event) =>
+                      handleSpecialization(event.target.value)
+                    }
                     className={selectClass}
                   >
                     <option value="all">All specializations</option>
@@ -401,10 +418,7 @@ export default function Doctor() {
                   </span>
                   <select
                     value={sortBy}
-                    onChange={(event) => {
-                      setSortBy(event.target.value);
-                      setCurrentPage(1);
-                    }}
+                    onChange={(event) => handleSort(event.target.value)}
                     className={selectClass}
                   >
                     <option value="name">Name (A–Z)</option>
@@ -423,7 +437,7 @@ export default function Doctor() {
                   {filteredDoctors.length === 1 ? "doctor" : "doctors"} found
                 </p>
 
-                {hasFilters && (
+                {hasActiveFilters && (
                   <button
                     type="button"
                     onClick={resetFilters}
@@ -437,7 +451,7 @@ export default function Doctor() {
           </Container>
         </section>
 
-        {/* Doctor listing */}
+        {/* Responsive doctor cards */}
         <section className="pb-14 sm:pb-20">
           <Container>
             {visibleDoctors.length > 0 ? (
@@ -450,7 +464,10 @@ export default function Doctor() {
 
                 <p className="mt-6 text-center text-xs text-slate-500">
                   Showing {startIndex + 1}–
-                  {Math.min(startIndex + pageSize, filteredDoctors.length)}{" "}
+                  {Math.min(
+                    startIndex + pageSize,
+                    filteredDoctors.length
+                  )}{" "}
                   of {filteredDoctors.length} doctors
                 </p>
 
@@ -462,12 +479,37 @@ export default function Doctor() {
               </>
             ) : (
               <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-14 text-center sm:px-8">
-                <h2 className="text-xl font-semibold text-slate-950">
+                <div className="mx-auto grid size-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-800">
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="size-6"
+                  >
+                    <circle
+                      cx="11"
+                      cy="11"
+                      r="7"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                    />
+                    <path
+                      d="m16 16 4 4"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+
+                <h2 className="mt-4 text-xl font-semibold text-slate-950">
                   No doctors found
                 </h2>
+
                 <p className="mt-2 text-sm leading-6 text-slate-500">
                   Try another search term or change the specialization.
                 </p>
+
                 <button
                   type="button"
                   onClick={resetFilters}
@@ -480,7 +522,7 @@ export default function Doctor() {
           </Container>
         </section>
 
-        {/* Appointment call to action */}
+        {/* Appointment CTA */}
         <section className="pb-14 sm:pb-20">
           <Container>
             <div className="rounded-3xl bg-[#12372a] px-5 py-10 text-center sm:rounded-[2rem] sm:px-12 sm:py-14">
