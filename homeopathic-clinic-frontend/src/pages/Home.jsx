@@ -27,7 +27,7 @@ function Home() {
         <TrustStats />
 
         {/* Featured doctor: Dr. Pranita Kanade */}
-        <DoctorPreview />
+        {/* <DoctorPreview /> */}
 
         {/* Multiple doctors preview */}
         <DoctorsPreviewGrid />
