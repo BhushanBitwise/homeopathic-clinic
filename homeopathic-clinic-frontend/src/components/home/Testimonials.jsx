@@ -6,7 +6,7 @@ import { testimonials } from "../../data/testimonials";
 
 export default function Testimonials() {
   return (
-    <section className="bg-[#f8faf8] py-20 sm:py-28 border-t border-slate-900/5">
+    <section className="section-deferred bg-[#f8faf8] py-20 sm:py-28 border-t border-slate-900/5">
       <Container>
         <SectionHeading
           align="center"

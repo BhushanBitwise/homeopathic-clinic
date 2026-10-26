@@ -36,7 +36,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-white py-20 sm:py-24">
+    <section className="section-deferred bg-white py-20 sm:py-24">
       <Container>
         <SectionHeading
           align="center"

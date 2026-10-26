@@ -50,7 +50,7 @@ function LocationsPreview() {
   }, [search]);
 
   return (
-    <section className="border-y border-slate-900/5 bg-white py-20 sm:py-24">
+    <section className="section-deferred border-y border-slate-900/5 bg-white py-20 sm:py-24">
       <Container>
         {/* Heading */}
         <SectionHeading

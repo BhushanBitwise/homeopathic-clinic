@@ -49,16 +49,16 @@ export default function DoctorsPreviewGrid() {
   return (
     <section
       id="top-doctors"
-      className="relative overflow-hidden bg-[#0d2a20] py-20 text-white sm:py-24 lg:py-28"
+      className="section-deferred relative overflow-hidden bg-[#0d2a20] py-20 text-white sm:py-24 lg:py-28"
     >
-      {/* Ambient background glow */}
+      {/* Ambient background glow - GPU Isolated */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-emerald-400/[0.08] blur-[120px]"
+        className="blur-blob pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-emerald-400/[0.08] blur-3xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 bottom-10 h-96 w-96 rounded-full bg-amber-400/[0.06] blur-[120px]"
+        className="blur-blob pointer-events-none absolute -right-40 bottom-10 h-96 w-96 rounded-full bg-amber-400/[0.06] blur-3xl"
       />
 
       <Container className="relative">
@@ -153,6 +153,7 @@ export default function DoctorsPreviewGrid() {
                       src={doctor.image}
                       alt={doctor.name}
                       loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
                         e.target.src = "/images/doctors/doctor1.webp";

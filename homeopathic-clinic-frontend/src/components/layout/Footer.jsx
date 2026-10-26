@@ -43,15 +43,15 @@ const navigation = [
 export default function Footer() {
   return (
     <>
-      <footer className="relative overflow-hidden bg-[#0a261d] text-white">
-        {/* Ambient background decoration */}
+      <footer className="section-deferred relative overflow-hidden bg-[#0a261d] text-white">
+        {/* Ambient background decoration - GPU Isolated */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-40 -top-40 size-[420px] rounded-full bg-emerald-400/10 blur-3xl"
+          className="blur-blob pointer-events-none absolute -right-40 -top-40 size-[420px] rounded-full bg-emerald-400/10 blur-3xl"
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-40 -left-32 size-[360px] rounded-full bg-amber-400/5 blur-3xl"
+          className="blur-blob pointer-events-none absolute -bottom-40 -left-32 size-[360px] rounded-full bg-amber-400/5 blur-3xl"
         />
 
         <Container className="relative">

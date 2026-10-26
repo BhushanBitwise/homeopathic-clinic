@@ -130,8 +130,8 @@ export default function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
-        <div className="absolute -left-32 top-10 size-[32rem] rounded-full bg-emerald-100/40 blur-3xl" />
-        <div className="absolute right-0 top-20 size-[36rem] rounded-full bg-amber-100/35 blur-3xl" />
+        <div className="blur-blob absolute -left-32 top-10 size-[32rem] rounded-full bg-emerald-100/40 blur-3xl" />
+        <div className="blur-blob absolute right-0 top-20 size-[36rem] rounded-full bg-amber-100/35 blur-3xl" />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#faf9f5] to-transparent" />
       </div>
 
@@ -256,8 +256,8 @@ export default function Hero() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* Ambient Warm Golden-Emerald Aura */}
-            <div className="absolute -inset-2 rounded-[2.5rem] bg-gradient-to-tr from-emerald-500/15 via-amber-400/20 to-teal-400/15 blur-2xl transition-all" />
+            {/* Ambient Warm Golden-Emerald Aura - GPU Compositor Animated */}
+            <div className="animate-aura pointer-events-none absolute -inset-2 rounded-[2.5rem] bg-gradient-to-tr from-emerald-500/15 via-amber-400/20 to-teal-400/15 blur-xl" />
 
             {/* Astrotalk Pristine Shining Card */}
             <div className="card-astrotalk-glow relative overflow-hidden rounded-[2.25rem] border border-[#dce3d6] bg-gradient-to-b from-[#ffffff] via-[#fcfbf8] to-[#f6f5ee] p-5 sm:p-6 shadow-2xl">
@@ -288,6 +288,8 @@ export default function Hero() {
                       key={activeDoctor?.id}
                       src={activeDoctor?.image || currentStarConfig.avatarThumb}
                       alt={activeDoctor?.name || "MD Homeopath"}
+                      fetchPriority="high"
+                      decoding="async"
                       className="h-full w-full object-cover object-top animate-fadeIn transition-transform duration-500 hover:scale-105"
                       onError={(e) => {
                         e.target.src = "/images/doctors/doctor1.webp";

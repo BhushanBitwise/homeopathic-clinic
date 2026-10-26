@@ -9,7 +9,7 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="bg-white py-20 sm:py-28">
+    <section className="section-deferred bg-white py-20 sm:py-28">
       <Container>
         <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
           <SectionHeading

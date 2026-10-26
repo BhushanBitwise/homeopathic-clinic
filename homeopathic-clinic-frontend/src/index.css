@@ -41,9 +41,7 @@ html {
   overflow-x: hidden;
   overflow-y: auto;
 
-  scroll-behavior: smooth;
-
-  /* Standard modern properties */
+  /* Standard modern properties - native instant 1:1 wheel scroll delta without rubber-band lag */
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
@@ -184,7 +182,7 @@ p {
   outline-offset: 3px;
 }
 
-/* Astrotalk Golden / Emerald Shimmer Effect */
+/* Astrotalk Golden / Emerald Shimmer Effect - GPU Compositor Accelerated */
 @keyframes cardShine {
   0% {
     transform: translateX(-100%) rotate(45deg);
@@ -196,19 +194,46 @@ p {
 
 .animate-card-shine {
   animation: cardShine 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
-@keyframes pulseGlow {
+/* High-depth shadow + GPU layer promotion (eliminates 60fps CPU box-shadow repaints) */
+.card-astrotalk-glow {
+  box-shadow:
+    0 16px 40px -10px rgba(20, 92, 67, 0.1),
+    0 0 28px rgba(245, 158, 11, 0.16);
+  transform: translateZ(0);
+}
+
+@keyframes auraBreathe {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2), 0 20px 40px rgba(23, 63, 50, 0.08);
+    opacity: 0.65;
+    transform: scale(0.98);
   }
   50% {
-    box-shadow: 0 0 35px rgba(245, 158, 11, 0.4), 0 25px 50px rgba(23, 63, 50, 0.14);
+    opacity: 1;
+    transform: scale(1.02);
   }
 }
 
-.card-astrotalk-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
+.animate-aura {
+  animation: auraBreathe 4s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Hardware-isolated blur blobs for silky 60/120fps scrolling */
+.blur-blob {
+  transform: translateZ(0);
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Modern Web Guidance: defer-rendering-heavy-content for below-the-fold sections */
+.section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 500px;
 }
 
 @keyframes fadeInSlide {
@@ -223,7 +248,7 @@ p {
 }
 
 .animate-fadeIn {
-  animation: fadeInSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Minimalist Unobtrusive Scrollbar for Modals and Cards */

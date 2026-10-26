@@ -32,8 +32,16 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 20;
+          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -59,7 +67,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-40 transform-gpu will-change-transform transition-[background-color,border-color,box-shadow] duration-200 ${
         scrolled
           ? "border-b border-slate-900/10 bg-white/95 shadow-sm backdrop-blur-md"
           : "bg-white/80 backdrop-blur-sm"

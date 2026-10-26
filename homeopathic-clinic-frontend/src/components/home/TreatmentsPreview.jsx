@@ -7,7 +7,7 @@ import { treatments } from "../../data/treatments";
 
 function TreatmentsPreview() {
   return (
-    <section className="bg-[#f8faf8] py-20 sm:py-28">
+    <section className="section-deferred bg-[#f8faf8] py-20 sm:py-28">
       <Container>
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading

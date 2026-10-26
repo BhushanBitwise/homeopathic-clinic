@@ -37,7 +37,7 @@ const benefits = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="overflow-hidden bg-[#0c2f24] py-20 text-white sm:py-28">
+    <section className="section-deferred overflow-hidden bg-[#0c2f24] py-20 text-white sm:py-28">
       <Container>
         <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-20">
           <div>
