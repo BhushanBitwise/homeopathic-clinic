@@ -11,15 +11,17 @@ function Treatments() {
     <div className="min-h-screen bg-[#f8faf8]">
       <Navbar />
 
-      <main className="pt-[76px]">
-        <section className="border-b border-slate-900/8 bg-white py-20 sm:py-28">
+      <main className="pt-20 sm:pt-24">
+        <section className="border-b border-slate-900/8 bg-white py-16 sm:py-24">
           <Container>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
-              Areas of care
-            </p>
+            <div className="flex items-center gap-2 mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#145c43]">
+              <span className="w-7 h-[2px] bg-[#145c43]" />
+              <span>Areas of care</span>
+            </div>
 
-            <h1 className="mt-4 max-w-3xl text-5xl font-semibold tracking-[-0.05em] text-slate-950 sm:text-6xl">
-              Personalized care for different needs.
+            <h1 className="mt-4 max-w-3xl font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-950">
+              Personalized care for{" "}
+              <em className="italic font-bold text-[#145c43]">different needs</em>.
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">

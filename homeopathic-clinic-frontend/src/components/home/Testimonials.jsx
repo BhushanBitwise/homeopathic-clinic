@@ -1,48 +1,70 @@
-import { Quote, Star } from "lucide-react";
+import { MapPin, Quote, Sparkles, Star } from "lucide-react";
 
 import Container from "../common/Container";
 import SectionHeading from "../common/SectionHeading";
 import { testimonials } from "../../data/testimonials";
 
-function Testimonials() {
+export default function Testimonials() {
   return (
-    <section className="bg-[#f8faf8] py-20 sm:py-28">
+    <section className="bg-[#f8faf8] py-20 sm:py-28 border-t border-slate-900/5">
       <Container>
         <SectionHeading
           align="center"
-          eyebrow="Patient experiences"
-          title="A care experience people remember."
-          description="Real patient stories will be displayed here once approved for publication."
+          eyebrow="Real Patient Reviews"
+          title={
+            <>
+              Real Stories from Patients{" "}
+              <em className="italic font-normal text-[#58745e]">Across India</em>
+            </>
+          }
+          description="Read how our city-wise top rated homeopaths have helped thousands recover naturally from chronic conditions."
         />
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
-          {testimonials.map((testimonial) => (
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((item) => (
             <article
-              key={testimonial.name}
-              className="rounded-[1.75rem] border border-slate-900/8 bg-white p-7 shadow-sm"
+              key={item.id}
+              className="flex flex-col justify-between rounded-3xl border border-slate-900/8 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-emerald-800/20"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex gap-1 text-amber-500">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star key={index} size={14} fill="currentColor" />
-                  ))}
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-amber-500">
+                    {Array.from({ length: item.rating }).map((_, index) => (
+                      <Star key={index} size={15} className="fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800">
+                    <MapPin size={11} />
+                    {item.city}
+                  </span>
                 </div>
 
-                <Quote size={22} className="text-emerald-100" />
+                <div className="mt-4">
+                  <span className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-700">
+                    Treated for: {item.concern}
+                  </span>
+                </div>
+
+                <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                  &ldquo;{item.text}&rdquo;
+                </p>
               </div>
 
-              <p className="mt-7 text-[15px] leading-7 text-slate-600">
-                “{testimonial.text}”
-              </p>
+              <div className="mt-6 border-t border-slate-100 pt-4 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-bold text-slate-900">{item.name}</p>
+                  <p className="text-xs text-slate-400">Verified Patient</p>
+                </div>
 
-              <div className="mt-8 border-t border-slate-900/8 pt-5">
-                <p className="text-sm font-semibold text-slate-900">
-                  {testimonial.name}
-                </p>
-
-                <p className="mt-1 text-xs text-slate-400">
-                  {testimonial.role}
-                </p>
+                <div className="text-right">
+                  <span className="text-[11px] font-semibold text-emerald-800 block">
+                    Consulted with
+                  </span>
+                  <span className="text-xs font-bold text-slate-800">
+                    {item.doctorName}
+                  </span>
+                </div>
               </div>
             </article>
           ))}
@@ -51,5 +73,3 @@ function Testimonials() {
     </section>
   );
 }
-
-export default Testimonials;

@@ -319,20 +319,19 @@ function Locations() {
         <section className="border-b border-slate-900/5 pb-14 pt-32 sm:pb-16 sm:pt-40">
           <Container>
             <div className="mx-auto max-w-4xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-800">
-                Locations
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#145c43]">
+                Nationwide Healthcare Network
               </p>
 
-              <h1 className="mt-5 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
-                Homeopathy care,
-                <span className="block text-emerald-800">
-                  wherever you are.
+              <h1 className="mt-4 text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                Top 5 Homeopathic Doctors{" "}
+                <span className="block text-[#145c43]">
+                  in Every Indian City
                 </span>
               </h1>
 
-              <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                Explore consultation information for cities across
-                Maharashtra and selected locations across India.
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                Find curated, verified top-ranked homeopaths in your city. Pune Headquarters led by Dr. Pranita Kanade (M.D. Hom). First consultation is 100% Free.
               </p>
 
               {/* SEARCH */}

@@ -1,27 +1,34 @@
 export const faqs = [
   {
-    question: "How do I book an appointment?",
+    question: "How does the 100% Free First Consultation work?",
     answer:
-      "Choose your preferred consultation type, select an available date and time, enter your details, and confirm the request through WhatsApp.",
+      "Just like Astrotalk, new patients on HealingCare get their first 5-minute live chat or initial video consultation completely FREE (₹0). You can discuss your health history, ask questions about homeopathic suitability, and understand the doctor's treatment protocol before making any financial commitment.",
   },
   {
-    question: "Can I book an appointment through WhatsApp?",
+    question: "Why does HealingCare only list the Top 5 doctors per city?",
     answer:
-      "Yes. The appointment form prepares a structured WhatsApp message containing your selected consultation details.",
+      "Most healthcare directories list thousands of unverified practitioners, creating confusion. HealingCare handpicks and credentials only the top 5 highest-rated MD and senior BHMS homeopaths per city based on patient outcomes, clinical tenure, and root-cause healing standards.",
   },
   {
-    question: "What should I bring for my consultation?",
+    question: "Is Dr. Pranita Kanade available for both Pune clinic visits and online calls?",
     answer:
-      "You can keep your previous medical reports, current medication details and relevant health history available for discussion with the doctor.",
+      "Yes! Dr. Pranita Kanade (M.D. Hom, Nutritionist) leads our Pune network. She is available for in-person consultations at Shivaji Nagar / Kothrud, Pune, as well as high-definition video calls and WhatsApp consultations for patients across Maharashtra and India.",
   },
   {
-    question: "Can I choose between clinic and online consultation?",
+    question: "How do I receive medicines if I consult online?",
     answer:
-      "Yes, where available. You can select your preferred consultation type while booking.",
+      "Following your consultation, the doctor formulates your personalized constitutional remedy. Medicines are sealed, barcoded, and dispatched via express courier to your doorstep anywhere in India within 24 to 72 hours.",
   },
   {
-    question: "How long does a consultation take?",
+    question: "Can I connect for an instant chat immediately?",
     answer:
-      "Consultation duration can vary depending on the individual case. The clinic can provide the exact expected duration.",
+      "Yes! Simply click the 'Chat' button on any doctor profile marked 'Online'. You can share your symptoms, get immediate answers, and seamlessly transition to WhatsApp or video meeting if required.",
+  },
+  {
+    question: "Are homeopathic medicines safe to take along with allopathic medicines?",
+    answer:
+      "Yes, classical homeopathy does not chemically interfere with conventional allopathic medications (like blood pressure, thyroid, or diabetes tablets). Your doctor will guide you on maintaining a 30-minute interval between dosages.",
   },
 ];
+
+export default faqs;

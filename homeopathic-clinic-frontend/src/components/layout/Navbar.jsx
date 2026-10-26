@@ -1,1044 +1,217 @@
-// import { useEffect, useState } from "react";
-// import {
-//   Menu,
-//   MessageCircle,
-//   X,
-// } from "lucide-react";
-// import {
-//   Link,
-//   NavLink,
-// } from "react-router-dom";
-
-// import Container from "../common/Container";
-// import Button from "../common/Button";
-
-// const navItems = [
-//   {
-//     label: "Home",
-//     to: "/",
-//   },
-//   {
-//     label: "About",
-//     to: "/about",
-//   },
-//   {
-//     label: "Treatments",
-//     to: "/treatments",
-//   },
-//   {
-//     label: "Doctor",
-//     to: "/doctor",
-//   },
-//   {
-//     label: "Contact",
-//     to: "/contact",
-//   },
-// ];
-
-// const whatsappUrl =
-//   "https://wa.me/918767907569?text=Hello%20HealingCare%2C%20I%20would%20like%20to%20book%20a%20consultation.";
-
-// function Navbar() {
-//   const [menuOpen, setMenuOpen] = useState(false);
-//   const [scrolled, setScrolled] = useState(false);
-
-//   /* --------------------------------
-//      Scroll state
-//   -------------------------------- */
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       setScrolled(window.scrollY > 12);
-//     };
-
-//     handleScroll();
-
-//     window.addEventListener(
-//       "scroll",
-//       handleScroll,
-//       { passive: true }
-//     );
-
-//     return () => {
-//       window.removeEventListener(
-//         "scroll",
-//         handleScroll
-//       );
-//     };
-//   }, []);
-
-//   /* --------------------------------
-//      Lock page scroll while menu open
-//   -------------------------------- */
-//   useEffect(() => {
-//     if (!menuOpen) {
-//       document.body.style.overflow = "";
-//       return;
-//     }
-
-//     document.body.style.overflow = "hidden";
-
-//     return () => {
-//       document.body.style.overflow = "";
-//     };
-//   }, [menuOpen]);
-
-//   /* --------------------------------
-//      Close menu with Escape
-//   -------------------------------- */
-//   useEffect(() => {
-//     if (!menuOpen) {
-//       return;
-//     }
-
-//     const handleKeyDown = (event) => {
-//       if (event.key === "Escape") {
-//         setMenuOpen(false);
-//       }
-//     };
-
-//     window.addEventListener(
-//       "keydown",
-//       handleKeyDown
-//     );
-
-//     return () => {
-//       window.removeEventListener(
-//         "keydown",
-//         handleKeyDown
-//       );
-//     };
-//   }, [menuOpen]);
-
-//   /* --------------------------------
-//      Close menu when viewport becomes desktop
-//   -------------------------------- */
-//   useEffect(() => {
-//     const handleResize = () => {
-//       if (window.innerWidth >= 1024) {
-//         setMenuOpen(false);
-//       }
-//     };
-
-//     window.addEventListener(
-//       "resize",
-//       handleResize,
-//       { passive: true }
-//     );
-
-//     return () => {
-//       window.removeEventListener(
-//         "resize",
-//         handleResize
-//       );
-//     };
-//   }, []);
-
-//   const closeMenu = () => {
-//     setMenuOpen(false);
-//   };
-
-//   const toggleMenu = () => {
-//     setMenuOpen((current) => !current);
-//   };
-
-//   return (
-//     <header
-//       className={`
-//         fixed
-//         inset-x-0
-//         top-0
-//         z-[100]
-//         pt-[env(safe-area-inset-top)]
-//         transition-all
-//         duration-300
-
-//         ${
-//           scrolled
-//             ? "border-b border-slate-900/8 bg-[#f8faf8]/95 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-xl"
-//             : "bg-[#f8faf8]/92 backdrop-blur-md"
-//         }
-//       `}
-//     >
-//       {/* =========================================
-//           MAIN NAVBAR
-//       ========================================== */}
-//       <Container>
-//         <div className="flex h-[76px] items-center justify-between">
-//           {/* ---------------------------------------
-//               BRAND
-//           ---------------------------------------- */}
-//           <Link
-//             to="/"
-//             onClick={closeMenu}
-//             aria-label="HealingCare Home"
-//             className="group flex min-h-11 items-center gap-3"
-//           >
-//             <div
-//               aria-hidden="true"
-//               className="
-//                 relative
-//                 grid
-//                 size-10
-//                 shrink-0
-//                 place-items-center
-//                 overflow-hidden
-//                 rounded-[14px]
-//                 bg-[#145c43]
-//                 text-white
-//                 shadow-[0_8px_20px_rgba(20,92,67,0.18)]
-//               "
-//             >
-//               <span className="absolute h-5 w-1 rounded-full bg-white/90" />
-
-//               <span className="absolute h-1 w-5 rounded-full bg-white/90" />
-//             </div>
-
-//             <div className="leading-none">
-//               <p className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">
-//                 HealingCare
-//               </p>
-
-//               <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-//                 Homeopathy Clinic
-//               </p>
-//             </div>
-//           </Link>
-
-//           {/* ---------------------------------------
-//               DESKTOP NAVIGATION
-//           ---------------------------------------- */}
-//           <nav
-//             aria-label="Primary navigation"
-//             className="hidden items-center gap-1 lg:flex"
-//           >
-//             {navItems.map((item) => (
-//               <NavLink
-//                 key={item.to}
-//                 to={item.to}
-//                 className={({ isActive }) =>
-//                   `
-//                     rounded-full
-//                     px-4
-//                     py-2.5
-//                     text-[13px]
-//                     font-medium
-//                     transition-all
-//                     duration-200
-
-//                     ${
-//                       isActive
-//                         ? "bg-white text-[#145c43] shadow-sm"
-//                         : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
-//                     }
-//                   `
-//                 }
-//               >
-//                 {item.label}
-//               </NavLink>
-//             ))}
-//           </nav>
-
-//           {/* ---------------------------------------
-//               DESKTOP ACTIONS
-//           ---------------------------------------- */}
-//           <div className="hidden items-center gap-3 lg:flex">
-//             <a
-//               href={whatsappUrl}
-//               target="_blank"
-//               rel="noreferrer"
-//               aria-label="Chat with HealingCare on WhatsApp"
-//               className="
-//                 grid
-//                 size-12
-//                 place-items-center
-//                 rounded-full
-//                 border
-//                 border-slate-900/10
-//                 bg-white
-//                 text-[#145c43]
-//                 shadow-sm
-//                 transition-all
-//                 duration-200
-//                 hover:-translate-y-0.5
-//                 hover:shadow-md
-//               "
-//             >
-//               <MessageCircle
-//                 size={19}
-//                 strokeWidth={1.8}
-//               />
-//             </a>
-
-//             <Button to="/appointment">
-//               Book Appointment
-//             </Button>
-//           </div>
-
-//           {/* ---------------------------------------
-//               MOBILE MENU BUTTON
-//           ---------------------------------------- */}
-//           <button
-//             type="button"
-//             aria-label={
-//               menuOpen
-//                 ? "Close navigation menu"
-//                 : "Open navigation menu"
-//             }
-//             aria-expanded={menuOpen}
-//             aria-controls="mobile-navigation"
-//             onClick={toggleMenu}
-//             className="
-//               relative
-//               z-[120]
-//               grid
-//               size-11
-//               shrink-0
-//               place-items-center
-//               rounded-full
-//               border
-//               border-slate-900/10
-//               bg-white
-//               text-slate-800
-//               shadow-sm
-//               transition-all
-//               duration-200
-//               active:scale-95
-//               lg:hidden
-//             "
-//           >
-//             <span
-//               className={`
-//                 transition-transform
-//                 duration-200
-//                 ${
-//                   menuOpen
-//                     ? "rotate-90"
-//                     : "rotate-0"
-//                 }
-//               `}
-//             >
-//               {menuOpen ? (
-//                 <X size={20} strokeWidth={2} />
-//               ) : (
-//                 <Menu size={20} strokeWidth={2} />
-//               )}
-//             </span>
-//           </button>
-//         </div>
-//       </Container>
-
-//       {/* =========================================
-//           MOBILE MENU
-//       ========================================== */}
-
-//       <div
-//         id="mobile-navigation"
-//         aria-hidden={!menuOpen}
-//         className={`
-//           absolute
-//           inset-x-0
-//           top-full
-//           z-[110]
-//           border-t
-//           border-slate-900/8
-//           bg-[#f8faf8]
-//           shadow-[0_20px_45px_rgba(15,23,42,0.08)]
-//           transition-all
-//           duration-300
-//           lg:hidden
-
-//           ${
-//             menuOpen
-//               ? "visible translate-y-0 opacity-100"
-//               : "invisible -translate-y-2 opacity-0"
-//           }
-//         `}
-//       >
-//         {/* Drawer */}
-//         <div
-//           className="
-//             max-h-[calc(100svh-76px-env(safe-area-inset-top))]
-//             overflow-y-auto
-//             overscroll-contain
-//           "
-//         >
-//           <Container>
-//             <div className="flex min-h-[calc(100svh-76px-env(safe-area-inset-top))] flex-col py-5">
-//               {/* Navigation links */}
-//               <nav
-//                 aria-label="Mobile navigation"
-//                 className="flex flex-col gap-2"
-//               >
-//                 {navItems.map(
-//                   (item, index) => (
-//                     <NavLink
-//                       key={item.to}
-//                       to={item.to}
-//                       onClick={closeMenu}
-//                       style={{
-//                         transitionDelay: menuOpen
-//                           ? `${index * 35}ms`
-//                           : "0ms",
-//                       }}
-//                       className={({
-//                         isActive,
-//                       }) =>
-//                         `
-//                           flex
-//                           min-h-14
-//                           items-center
-//                           justify-between
-//                           rounded-2xl
-//                           px-5
-//                           text-base
-//                           font-medium
-//                           transition-all
-//                           duration-300
-
-//                           ${
-//                             menuOpen
-//                               ? "translate-x-0 opacity-100"
-//                               : "-translate-x-4 opacity-0"
-//                           }
-
-//                           ${
-//                             isActive
-//                               ? "bg-emerald-50 text-[#145c43]"
-//                               : "text-slate-700 hover:bg-white hover:text-slate-950"
-//                           }
-//                         `
-//                       }
-//                     >
-//                       <span>
-//                         {item.label}
-//                       </span>
-
-//                       <span
-//                         aria-hidden="true"
-//                         className={`
-//                           text-lg
-//                           transition-transform
-//                           duration-200
-//                           ${
-//                             menuOpen
-//                               ? "translate-x-0 opacity-100"
-//                               : "-translate-x-2 opacity-0"
-//                           }
-//                         `}
-//                       >
-//                         →
-//                       </span>
-//                     </NavLink>
-//                   )
-//                 )}
-//               </nav>
-
-//               {/* Mobile bottom content */}
-//               <div
-//                 className="
-//                   mt-auto
-//                   border-t
-//                   border-slate-900/8
-//                   pt-5
-//                   pb-[calc(1rem+env(safe-area-inset-bottom))]
-//                 "
-//               >
-//                 <div className="grid gap-3 sm:grid-cols-2">
-//                   {/* Appointment */}
-//                   <Button
-//                     to="/appointment"
-//                     onClick={closeMenu}
-//                     className="w-full"
-//                   >
-//                     Book Appointment
-//                   </Button>
-
-//                   {/* WhatsApp */}
-//                   <a
-//                     href={whatsappUrl}
-//                     target="_blank"
-//                     rel="noreferrer"
-//                     onClick={closeMenu}
-//                     className="
-//                       inline-flex
-//                       min-h-12
-//                       items-center
-//                       justify-center
-//                       gap-2
-//                       rounded-full
-//                       border
-//                       border-slate-900/10
-//                       bg-white
-//                       px-5
-//                       text-sm
-//                       font-semibold
-//                       text-slate-800
-//                       shadow-sm
-//                       transition-all
-//                       duration-200
-//                       hover:border-emerald-800/20
-//                       hover:bg-emerald-50
-//                       active:scale-[0.98]
-//                     "
-//                   >
-//                     <MessageCircle
-//                       size={17}
-//                       strokeWidth={1.8}
-//                     />
-
-//                     WhatsApp
-//                   </a>
-//                 </div>
-
-//                 <p className="mt-5 text-center text-[10px] uppercase tracking-[0.16em] text-slate-400">
-//                   Thoughtful care · Personal attention
-//                 </p>
-//               </div>
-//             </div>
-//           </Container>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// }
-
-// export default Navbar;
-
-
-
-
-
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import {
+  ArrowRight,
+  Gift,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  X,
+} from "lucide-react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 import Container from "../common/Container";
-import Button from "../common/Button";
 
 const navItems = [
-  {
-    label: "Home",
-    to: "/",
-  },
-  {
-    label: "About",
-    to: "/about",
-  },
-  {
-    label: "Treatments",
-    to: "/treatments",
-  },
-  {
-    label: "Doctor",
-    to: "/doctor",
-  },
-  {
-    label: "Locations",
-    to: "/locations",
-  },
-  {
-    label: "Contact",
-    to: "/contact",
-  },
+  { label: "Home", to: "/" },
+  { label: "Top 5 Doctors", to: "/doctor" },
+  { label: "Cities & Clinics", to: "/locations" },
+  { label: "Treatments", to: "/treatments" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
 ];
 
 const whatsappUrl =
-  "https://wa.me/918767907569?text=Hello%20HealingCare%2C%20I%20would%20like%20to%20book%20a%20consultation.";
+  "https://wa.me/918767907569?text=Hello%20HealingCare%2C%20I%20would%20like%20to%20claim%20my%20First%20Free%20Consultation%20with%20a%20Top%20Homeopath.";
 
-function Navbar() {
+export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
-  const menuButtonRef = useRef(null);
-  const mobileMenuRef = useRef(null);
-
-  /*
-   * Close mobile menu.
-   *
-   * Defined BEFORE the effects so there is no
-   * "used before defined" problem.
-   */
-  const closeMenu = useCallback(() => {
-    const activeElement = document.activeElement;
-
-    if (
-      mobileMenuRef.current &&
-      activeElement &&
-      mobileMenuRef.current.contains(activeElement)
-    ) {
-      menuButtonRef.current?.focus();
-    }
-
-    setMenuOpen(false);
-  }, []);
-
-  const toggleMenu = () => {
-    setMenuOpen((current) => !current);
-  };
-
-  /*
-   * Scroll shadow
-   */
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 12);
+      setScrolled(window.scrollY > 20);
     };
-
     handleScroll();
-
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  /*
-   * Prevent background page scrolling
-   * while mobile navigation is open.
-   */
+  // Close mobile menu on route change
   useEffect(() => {
-    if (!menuOpen) {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
       document.body.style.overflow = "";
-      return;
     }
-
-    document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
 
-  /*
-   * Escape key closes mobile menu.
-   */
-  useEffect(() => {
-    if (!menuOpen) {
-      return;
-    }
-
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [menuOpen, closeMenu]);
-
-  /*
-   * If user rotates/resizes to desktop,
-   * close the mobile menu.
-   */
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        closeMenu();
-      }
-    };
-
-    window.addEventListener("resize", handleResize, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [closeMenu]);
-
   return (
     <header
-      className={`
-        fixed
-        inset-x-0
-        top-0
-        z-[100]
-        pt-[env(safe-area-inset-top)]
-        transition-all
-        duration-300
-        ${
-          scrolled
-            ? "border-b border-slate-900/8 bg-[#f8faf8]/95 shadow-[0_8px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl"
-            : "bg-[#f8faf8]/95 backdrop-blur-md"
-        }
-      `}
+      className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-slate-900/10 bg-white/95 shadow-sm backdrop-blur-md"
+          : "bg-white/80 backdrop-blur-sm"
+      }`}
     >
-      {/* =====================================================
-          MAIN NAVBAR
-      ====================================================== */}
-
       <Container>
-        <div className="flex h-[76px] items-center justify-between">
-          {/* =================================================
-              LOGO
-          ================================================== */}
-
+        <div className="flex h-18 sm:h-20 items-center justify-between gap-4">
+          {/* Brand Logo */}
           <Link
             to="/"
-            onClick={closeMenu}
-            aria-label="HealingCare Home"
-            className="group flex min-h-11 items-center gap-3"
+            aria-label="HealingCare Homeopathy Home"
+            className="flex items-center gap-3 group"
           >
-            <div
-              aria-hidden="true"
-              className="
-                relative
-                grid
-                size-10
-                shrink-0
-                place-items-center
-                overflow-hidden
-                rounded-[14px]
-                bg-[#145c43]
-                shadow-[0_8px_20px_rgba(20,92,67,0.18)]
-                transition-transform
-                duration-200
-                group-hover:scale-[1.03]
-              "
-            >
-              <span className="absolute h-5 w-1 rounded-full bg-white" />
-              <span className="absolute h-1 w-5 rounded-full bg-white" />
-            </div>
-
-            <div className="leading-none">
-              <p className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">
-                HealingCare
-              </p>
-
-              <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                Homeopathy Clinic
-              </p>
+            <img
+              src="/HealingCareLogo.ico"
+              alt="HealingCare Logo"
+              width="44"
+              height="44"
+              className="size-11 rounded-2xl object-contain bg-white shadow-md shadow-emerald-950/10 border border-slate-200/80 p-1 transition-transform group-hover:scale-105"
+            />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xl font-bold tracking-tight text-slate-950">
+                  HealingCare
+                </span>
+                <span className="rounded-md bg-amber-100 px-1.5 py-0.2 text-[10px] font-extrabold uppercase tracking-wider text-amber-900">
+                  Top 5
+                </span>
+              </div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#145c43]">
+                Homeopathy Platform · India
+              </span>
             </div>
           </Link>
 
-          {/* =================================================
-              DESKTOP NAV
-          ================================================== */}
-
+          {/* Desktop Navigation Links */}
           <nav
-            aria-label="Primary navigation"
-            className="hidden items-center gap-1 lg:flex"
+            aria-label="Main navigation"
+            className="hidden lg:flex items-center gap-1 rounded-full border border-slate-900/5 bg-[#f8faf8] p-1.5"
           >
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `
-                    relative
-                    inline-flex
-                    min-h-11
-                    items-center
-                    justify-center
-                    rounded-full
-                    px-4
-                    py-2.5
-                    text-[13px]
-                    font-medium
-                    transition-all
-                    duration-200
-                    ${
-                      isActive
-                        ? "bg-white text-[#145c43] shadow-sm"
-                        : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
-                    }
-                  `
+                  `rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "bg-[#145c43] text-white shadow-xs"
+                      : "text-slate-600 hover:text-slate-950 hover:bg-white"
+                  }`
                 }
               >
-                {({ isActive }) => (
-                  <>
-                    {item.label}
-
-                    <span
-                      aria-hidden="true"
-                      className={`
-                        absolute
-                        bottom-1.5
-                        left-1/2
-                        h-0.5
-                        -translate-x-1/2
-                        rounded-full
-                        bg-[#145c43]
-                        transition-all
-                        duration-200
-                        ${
-                          isActive
-                            ? "w-3 opacity-100"
-                            : "w-0 opacity-0"
-                        }
-                      `}
-                    />
-                  </>
-                )}
+                {item.label}
               </NavLink>
             ))}
           </nav>
 
-          {/* =================================================
-              DESKTOP ACTIONS
-          ================================================== */}
-
-          <div className="hidden items-center gap-3 lg:flex">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                inline-flex
-                min-h-12
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-slate-900/10
-                bg-white
-                px-5
-                text-sm
-                font-semibold
-                text-[#145c43]
-                shadow-sm
-                transition-all
-                duration-200
-                hover:-translate-y-0.5
-                hover:border-emerald-800/20
-                hover:bg-emerald-50
-                active:scale-95
-              "
+          {/* Desktop Action Buttons */}
+          <div className="hidden sm:flex items-center gap-3">
+            <Link
+              to="/doctor"
+              className="group inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-900 transition hover:bg-amber-100"
             >
-              WhatsApp
-            </a>
+              <Gift size={14} className="text-amber-600 animate-pulse" />
+              <span>1st Chat Free</span>
+            </Link>
 
-            <Button
+            <Link
               to="/appointment"
-              showArrow={false}
+              className="inline-flex items-center gap-2 rounded-full bg-[#145c43] px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-emerald-900/15 transition hover:bg-[#0e4532] active:scale-95"
             >
-              Book Appointment
-            </Button>
+              <span>Book Meeting</span>
+              <ArrowRight size={14} />
+            </Link>
           </div>
 
-          {/* =================================================
-              MOBILE MENU BUTTON
-          ================================================== */}
-
+          {/* Mobile Menu Hamburger */}
           <button
-            ref={menuButtonRef}
             type="button"
-            aria-label={
-              menuOpen
-                ? "Close navigation menu"
-                : "Open navigation menu"
-            }
-            aria-expanded={menuOpen}
-            aria-controls="mobile-navigation"
-            onClick={toggleMenu}
-            className="
-              relative
-              z-[130]
-              grid
-              size-11
-              place-items-center
-              rounded-full
-              border
-              border-slate-900/10
-              bg-white
-              text-slate-800
-              shadow-sm
-              transition-all
-              duration-200
-              hover:border-emerald-800/20
-              hover:bg-emerald-50
-              active:scale-95
-              lg:hidden
-            "
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="grid size-11 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-xs lg:hidden transition hover:bg-slate-50"
           >
-            <span
-              className={`
-                transition-transform
-                duration-200
-                ${menuOpen ? "rotate-90" : "rotate-0"}
-              `}
-            >
-              {menuOpen ? (
-                <X size={20} strokeWidth={2} />
-              ) : (
-                <Menu size={20} strokeWidth={2} />
-              )}
-            </span>
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </Container>
 
-      {/* =====================================================
-          MOBILE BACKDROP
-      ====================================================== */}
-
-      {menuOpen && (
-        <div
-          aria-hidden="true"
-          onClick={closeMenu}
-          className="
-            fixed
-            inset-0
-            top-[calc(76px+env(safe-area-inset-top))]
-            z-[105]
-            bg-slate-950/20
-            backdrop-blur-[2px]
-            lg:hidden
-          "
-        />
-      )}
-
-      {/* =====================================================
-          MOBILE MENU
-      ====================================================== */}
-
+      {/* Mobile Drawer */}
       <div
-        ref={mobileMenuRef}
-        id="mobile-navigation"
-        className={`
-          absolute
-          inset-x-0
-          top-full
-          z-[110]
-          overflow-hidden
-          border-t
-          border-slate-900/8
-          bg-[#f8faf8]
-          shadow-[0_20px_45px_rgba(15,23,42,0.08)]
-          transition-all
-          duration-300
-          lg:hidden
-          ${
-            menuOpen
-              ? "visible translate-y-0 opacity-100"
-              : "invisible pointer-events-none -translate-y-2 opacity-0"
-          }
-        `}
+        className={`fixed inset-x-0 top-18 sm:top-20 z-50 bg-[#f8faf8] border-b border-slate-200 shadow-2xl transition-all duration-300 lg:hidden ${
+          menuOpen
+            ? "visible translate-y-0 opacity-100 max-h-[85vh] overflow-y-auto"
+            : "invisible -translate-y-4 opacity-0 pointer-events-none max-h-0"
+        }`}
       >
-        <div className="max-h-[calc(100svh-76px-env(safe-area-inset-top))] overflow-y-auto overscroll-contain">
-          <Container>
-            <div className="flex min-h-[calc(100svh-76px-env(safe-area-inset-top))] flex-col py-5">
-              {/* =================================================
-                  MOBILE LINKS
-              ================================================== */}
+        <Container className="py-6">
+          {/* Mobile Astrotalk Offer Box */}
+          <div className="mb-4 rounded-2xl border border-amber-300/40 bg-amber-50 p-3 text-xs font-medium text-amber-900 flex items-center justify-between">
+            <span className="flex items-center gap-1.5 font-bold">
+              <Gift size={16} className="text-amber-600" />
+              1st Consultation Free
+            </span>
+            <span className="rounded bg-amber-500 px-2 py-0.5 text-[11px] font-extrabold text-slate-950">
+              ₹0 VOUCHER
+            </span>
+          </div>
 
-              <nav
-                aria-label="Mobile navigation"
-                className="flex flex-col gap-2"
+          {/* Mobile Nav Links */}
+          <nav className="flex flex-col gap-1.5">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+                    isActive
+                      ? "bg-[#145c43] text-white"
+                      : "text-slate-700 hover:bg-white"
+                  }`
+                }
               >
-                {navItems.map((item, index) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    onClick={closeMenu}
-                    style={{
-                      transitionDelay: menuOpen
-                        ? `${index * 35}ms`
-                        : "0ms",
-                    }}
-                    className={({ isActive }) =>
-                      `
-                        flex
-                        min-h-14
-                        items-center
-                        justify-between
-                        rounded-2xl
-                        px-5
-                        text-base
-                        font-medium
-                        transition-all
-                        duration-300
-                        ${
-                          menuOpen
-                            ? "translate-x-0 opacity-100"
-                            : "-translate-x-4 opacity-0"
-                        }
-                        ${
-                          isActive
-                            ? "bg-emerald-50 text-[#145c43] shadow-sm"
-                            : "text-slate-700 hover:bg-white hover:text-slate-950"
-                        }
-                      `
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <span>{item.label}</span>
+                <span>{item.label}</span>
+                <ArrowRight size={14} className="opacity-50" />
+              </NavLink>
+            ))}
+          </nav>
 
-                        {isActive && (
-                          <span
-                            aria-hidden="true"
-                            className="size-1.5 rounded-full bg-[#145c43]"
-                          />
-                        )}
-                      </>
-                    )}
-                  </NavLink>
-                ))}
-              </nav>
+          {/* Mobile Contact & CTAs */}
+          <div className="mt-6 border-t border-slate-200 pt-5 space-y-2.5">
+            <Link
+              to="/appointment"
+              onClick={() => setMenuOpen(false)}
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#145c43] px-4 text-sm font-semibold text-white shadow-sm"
+            >
+              <span>Book Free Meeting</span>
+              <ArrowRight size={16} />
+            </Link>
 
-              {/* =================================================
-                  MOBILE ACTIONS
-              ================================================== */}
-
-              <div className="mt-auto border-t border-slate-900/8 pt-5 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Button
-                    to="/appointment"
-                    showArrow={false}
-                    onClick={closeMenu}
-                    className="w-full"
-                  >
-                    Book Appointment
-                  </Button>
-
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={closeMenu}
-                    className="
-                      inline-flex
-                      min-h-12
-                      items-center
-                      justify-center
-                      rounded-full
-                      border
-                      border-slate-900/10
-                      bg-white
-                      px-5
-                      text-sm
-                      font-semibold
-                      text-slate-800
-                      shadow-sm
-                      transition-all
-                      duration-200
-                      hover:border-emerald-800/20
-                      hover:bg-emerald-50
-                      active:scale-[0.98]
-                    "
-                  >
-                    WhatsApp
-                  </a>
-                </div>
-
-                <p className="mt-5 text-center text-[10px] uppercase tracking-[0.16em] text-slate-400">
-                  Thoughtful care · Personal attention
-                </p>
-              </div>
-            </div>
-          </Container>
-        </div>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#25d366]/30 bg-[#25d366]/10 px-4 text-sm font-bold text-emerald-900"
+            >
+              <MessageCircle size={18} className="text-[#25d366]" />
+              <span>WhatsApp: +91 8767907569</span>
+            </a>
+          </div>
+        </Container>
       </div>
     </header>
   );
 }
-
-export default Navbar;

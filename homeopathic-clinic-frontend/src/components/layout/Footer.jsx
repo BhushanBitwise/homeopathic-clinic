@@ -2,263 +2,271 @@ import {
   ArrowUpRight,
   CalendarDays,
   Clock3,
+  Mail,
   MapPin,
   MessageCircle,
+  Phone,
   ShieldCheck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import Container from "../common/Container";
+import { InstagramIcon, YoutubeIcon } from "../common/SocialIcons";
 
+const officialEmail = "healingcare.business@gmail.com";
+const officialPhone = "+91 8767907569";
+const youtubeUrl = "https://www.youtube.com/@HealingCareHomeopathy";
+const instagramUrl = "https://www.instagram.com/healingcare_homeopathy/";
 const whatsappUrl =
-  "https://wa.me/918767907569?text=Hello%20HealingCare%2C%20I%20would%20like%20to%20book%20a%20consultation.";
+  "https://wa.me/918767907569?text=Hello%20HealingCare%2C%20I%20would%20like%20to%20know%20more%20about%20booking%20a%20consultation.";
+
+const topCities = [
+  { name: "Pune (HQ · Dr. Pranita)", path: "/locations/maharashtra/pune" },
+  { name: "Mumbai Top 5", path: "/locations/maharashtra/mumbai" },
+  { name: "Delhi NCR Top 5", path: "/locations/delhi/delhi" },
+  { name: "Bengaluru Top 5", path: "/locations/karnataka/bengaluru" },
+  { name: "Hyderabad Top 5", path: "/locations/telangana/hyderabad" },
+  { name: "Kolkata Top 5", path: "/locations/west-bengal/kolkata" },
+  { name: "Chennai Top 5", path: "/locations/tamil-nadu/chennai" },
+];
 
 const navigation = [
   ["Home", "/"],
-  ["About the clinic", "/about"],
-  ["Treatments", "/treatments"],
-  ["Meet the doctor", "/doctor"],
-  ["Contact", "/contact"],
+  ["Top 5 Doctors by City", "/doctor"],
+  ["All Indian Cities", "/locations"],
+  ["Treatments & Conditions", "/treatments"],
+  ["About HealingCare", "/about"],
+  ["Book Free Consultation", "/appointment"],
+  ["Contact Support", "/contact"],
 ];
 
-function Footer() {
+export default function Footer() {
   return (
     <>
-      <footer className="relative overflow-hidden bg-[#0c2f24] text-white">
-        {/* Ambient background */}
+      <footer className="relative overflow-hidden bg-[#0a261d] text-white">
+        {/* Ambient background decoration */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -right-40 -top-40 size-[420px] rounded-full bg-emerald-300/10 blur-3xl"
+          className="pointer-events-none absolute -right-40 -top-40 size-[420px] rounded-full bg-emerald-400/10 blur-3xl"
         />
-
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-40 -left-32 size-[360px] rounded-full bg-amber-200/5 blur-3xl"
+          className="pointer-events-none absolute -bottom-40 -left-32 size-[360px] rounded-full bg-amber-400/5 blur-3xl"
         />
 
         <Container className="relative">
-          {/* CTA */}
-          <section className="border-b border-white/10 py-16 sm:py-20 lg:py-24">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <div className="max-w-3xl">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-200/70">
-                  Patient-first care
-                </p>
-
-                <h2 className="mt-5 text-4xl font-medium leading-[1.04] tracking-[-0.045em] text-white sm:text-5xl lg:text-6xl">
-                  Take the first step
-                  <span className="block text-emerald-200">
-                    toward better wellbeing.
-                  </span>
+          {/* Top Astrotalk-style CTA banner */}
+          <section className="border-b border-white/10 py-14 sm:py-18">
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <span className="inline-block rounded-full bg-amber-400/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-300">
+                  First Consultation Free
+                </span>
+                <h2 className="mt-4 text-3xl font-medium leading-tight tracking-[-0.035em] text-white sm:text-4xl lg:text-5xl">
+                  Ready to consult India&apos;s top 5 rated homeopaths?
                 </h2>
-
-                <p className="mt-6 max-w-2xl text-sm leading-7 text-emerald-50/65 sm:text-base">
-                  Have a health concern or simply want to understand your
-                  options? Start with a conversation built around you.
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-emerald-100/70 sm:text-base">
+                  Connect via instant chat, book a video consultation, or visit clinic partners. No upfront fees for your first 5-minute session.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
                 <Link
-                  to="/appointment"
-                  className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-white px-6 text-sm font-semibold text-[#0c2f24] shadow-[0_12px_35px_rgba(0,0,0,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-50"
+                  to="/doctor"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-sm font-bold text-[#0a261d] shadow-lg transition hover:bg-emerald-100"
                 >
-                  <CalendarDays size={17} />
-
-                  Book an Appointment
-
-                  <ArrowUpRight
-                    size={17}
-                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                  />
+                  <CalendarDays size={18} />
+                  <span>Choose Your City Doctor</span>
+                  <ArrowUpRight size={17} />
                 </Link>
 
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-white/15 bg-white/[0.06] px-6 text-sm font-semibold text-white transition hover:bg-white/10"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/15 px-6 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-500/25"
                 >
-                  <MessageCircle size={18} />
-                  WhatsApp Us
+                  <MessageCircle size={18} className="text-[#25d366]" />
+                  <span>Chat on WhatsApp</span>
                 </a>
               </div>
             </div>
           </section>
 
-          {/* Main footer */}
-          <section className="grid gap-12 py-14 sm:py-16 lg:grid-cols-[1.4fr_0.7fr_1fr] lg:gap-20">
-            {/* Brand */}
-            <div>
-              <Link
-                to="/"
-                className="inline-flex items-center gap-3"
-              >
-                <span className="grid size-11 place-items-center rounded-2xl border border-emerald-200/10 bg-emerald-100/10 text-emerald-200">
-                  <ShieldCheck size={21} strokeWidth={1.8} />
-                </span>
-
-                <span>
-                  <span className="block text-lg font-semibold">
-                    HealingCare
+          {/* Main Footer Links */}
+          <section className="grid gap-10 py-14 sm:py-16 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Brand & Socials */}
+            <div className="space-y-4">
+              <Link to="/" className="inline-flex items-center gap-3">
+                <img
+                  src="/HealingCareLogo.ico"
+                  alt="HealingCare Logo"
+                  width="44"
+                  height="44"
+                  className="size-11 rounded-2xl object-contain bg-white shadow-md p-1 border border-white/20"
+                />
+                <div>
+                  <span className="block text-lg font-bold">HealingCare</span>
+                  <span className="block text-[10px] font-semibold uppercase tracking-wider text-emerald-300/60">
+                    Homeopathy Platform · India
                   </span>
-
-                  <span className="block text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-200/50">
-                    Homeopathic Clinic
-                  </span>
-                </span>
+                </div>
               </Link>
 
-              <p className="mt-6 max-w-md text-sm leading-7 text-emerald-50/55">
-                Thoughtful homeopathic care with a calm, personal and
-                patient-first consultation experience.
-              </p>
-            </div>
-
-            {/* Navigation */}
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-200/45">
-                Explore
+              <p className="text-xs leading-relaxed text-emerald-100/60">
+                India&apos;s dedicated healthcare network connecting patients with the top 5 verified homeopathic doctors in every city. Safe, constitutional, patient-first care.
               </p>
 
-              <nav className="mt-5 flex flex-col gap-3.5">
-                {navigation.map(([label, path]) => (
-                  <Link
-                    key={path}
-                    to={path}
-                    className="group flex w-fit items-center gap-1.5 text-sm text-emerald-50/65 transition hover:text-white"
+              {/* Verified Social Media Links */}
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-300/80 mb-2">
+                  Follow Us Online
+                </p>
+                <div className="flex items-center gap-2.5">
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="HealingCare YouTube Channel"
+                    className="grid size-9 place-items-center rounded-xl bg-white/10 text-white transition hover:bg-red-600 hover:text-white"
                   >
-                    {label}
-
-                    <ArrowUpRight
-                      size={13}
-                      className="opacity-0 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100"
-                    />
-                  </Link>
-                ))}
-              </nav>
+                    <YoutubeIcon className="size-4.5" />
+                  </a>
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="HealingCare Instagram"
+                    className="grid size-9 place-items-center rounded-xl bg-white/10 text-white transition hover:bg-gradient-to-tr hover:from-amber-500 hover:to-pink-600 hover:text-white"
+                  >
+                    <InstagramIcon className="size-4.5" />
+                  </a>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="HealingCare WhatsApp"
+                    className="grid size-9 place-items-center rounded-xl bg-white/10 text-white transition hover:bg-[#25d366] hover:text-white"
+                  >
+                    <MessageCircle size={18} />
+                  </a>
+                </div>
+              </div>
             </div>
 
-            {/* Clinic */}
+            {/* Quick Navigation */}
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-200/45">
-                Clinic
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                Explore Platform
               </p>
+              <ul className="mt-4 space-y-2.5 text-xs text-emerald-100/70">
+                {navigation.map(([label, path]) => (
+                  <li key={path}>
+                    <Link
+                      to={path}
+                      className="transition hover:text-white flex items-center gap-1 group"
+                    >
+                      <span>{label}</span>
+                      <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-              <div className="mt-5 space-y-5">
-                <div className="flex gap-3">
-                  <MapPin
-                    size={17}
-                    className="mt-0.5 shrink-0 text-emerald-200/70"
-                  />
+            {/* City-Wise Top 5 Directory Links */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                City Top 5 Doctors
+              </p>
+              <ul className="mt-4 space-y-2.5 text-xs text-emerald-100/70">
+                {topCities.map((city) => (
+                  <li key={city.name}>
+                    <Link
+                      to={city.path}
+                      className="transition hover:text-white flex items-center gap-1 group"
+                    >
+                      <span>{city.name}</span>
+                      <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
+            {/* Official Contact Details */}
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                Contact & Support
+              </p>
+              <div className="mt-4 space-y-3.5 text-xs text-emerald-100/80">
+                <div className="flex items-start gap-2.5">
+                  <MapPin size={16} className="shrink-0 text-emerald-300 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-white">
-                      Pune, Maharashtra
-                    </p>
-
-                    <p className="mt-1 text-xs leading-5 text-emerald-50/45">
-                      Clinic address will be updated here
-                    </p>
+                    <strong className="text-white block font-semibold">Headquarters</strong>
+                    <span>Shivaji Nagar / Kothrud, Pune, Maharashtra 411005</span>
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Clock3
-                    size={17}
-                    className="mt-0.5 shrink-0 text-emerald-200/70"
-                  />
-
-                  <div>
-                    <p className="text-sm font-medium text-white">
-                      Consultation Hours
-                    </p>
-
-                    <p className="mt-1 text-xs text-emerald-50/45">
-                      Mon – Sat · 9:00 AM – 7:00 PM
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <Phone size={16} className="shrink-0 text-emerald-300" />
+                  <a href={`tel:${officialPhone}`} className="hover:text-white transition">
+                    {officialPhone}
+                  </a>
                 </div>
 
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-emerald-200 transition hover:text-white"
-                >
-                  <MessageCircle size={16} />
+                <div className="flex items-center gap-2.5">
+                  <Mail size={16} className="shrink-0 text-emerald-300" />
+                  <a href={`mailto:${officialEmail}`} className="hover:text-white transition">
+                    {officialEmail}
+                  </a>
+                </div>
 
-                  +91 87679 07569
-
-                  <ArrowUpRight size={14} />
-                </a>
+                <div className="flex items-start gap-2.5">
+                  <Clock3 size={16} className="shrink-0 text-emerald-300 mt-0.5" />
+                  <div>
+                    <span className="text-white block font-medium">Online Hours: 24/7 Support</span>
+                    <span className="text-[11px] text-emerald-200/60">Clinic Hours: Mon – Sat · 9 AM – 8 PM</span>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Bottom */}
-          <section className="flex flex-col gap-3 border-t border-white/10 py-6 text-xs text-emerald-50/35 sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 HealingCare. All rights reserved.</p>
-
-            <div className="flex items-center gap-4">
-              <Link
-                to="/contact"
-                className="transition hover:text-white/70"
-              >
-                Contact
-              </Link>
-
-              <span className="size-1 rounded-full bg-white/15" />
-
-              <span>Designed around your care.</span>
+          {/* Bottom Copyright & Guarantee */}
+          <section className="flex flex-col gap-3 border-t border-white/10 py-6 text-xs text-emerald-100/40 sm:flex-row sm:items-center sm:justify-between">
+            <p>© {new Date().getFullYear()} HealingCare Homeopathy Platform. All rights reserved.</p>
+            <div className="flex items-center gap-4 text-[11px]">
+              <span>100% Certified MD & BHMS Doctors</span>
+              <span>·</span>
+              <span>Made with care for India</span>
             </div>
           </section>
         </Container>
       </footer>
 
-      {/* Mobile appointment bar */}
-      <div
-        className="
-          fixed
-          inset-x-0
-          bottom-0
-          z-40
-          border-t
-          border-slate-900/10
-          bg-white/95
-          px-4
-          pb-[calc(0.75rem+env(safe-area-inset-bottom))]
-          pt-3
-          shadow-[0_-14px_40px_rgba(15,23,42,0.10)]
-          backdrop-blur-xl
-          lg:hidden
-        "
-      >
-        <div className="mx-auto flex max-w-md gap-2.5">
+      {/* Mobile Sticky Consultation Action Bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-900/10 bg-white/95 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl lg:hidden">
+        <div className="mx-auto flex max-w-md items-center gap-2">
           <Link
-            to="/appointment"
-            className="group flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full bg-[#145c43] px-4 text-sm font-semibold text-white shadow-[0_8px_25px_rgba(20,92,67,0.20)] transition active:scale-[0.98]"
+            to="/doctor"
+            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#145c43] px-4 text-xs font-bold text-white shadow-sm"
           >
-            <CalendarDays size={17} />
-
-            <span>Book Appointment</span>
-
-            <ArrowUpRight size={16} />
+            <CalendarDays size={16} />
+            <span>Consult Top 5 Doctor (Free)</span>
           </Link>
 
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            aria-label="Chat with the clinic on WhatsApp"
-            className="grid min-h-12 min-w-12 place-items-center rounded-full border border-[#145c43]/15 bg-emerald-50 text-[#145c43] transition active:scale-[0.96]"
+            aria-label="Chat on WhatsApp"
+            className="grid size-12 place-items-center rounded-2xl bg-[#25d366] text-white shadow-sm"
           >
-            <MessageCircle size={19} />
+            <MessageCircle size={20} />
           </a>
         </div>
       </div>
     </>
   );
 }
-
-export default Footer;

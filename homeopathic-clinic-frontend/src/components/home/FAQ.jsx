@@ -14,7 +14,12 @@ function FAQ() {
         <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
           <SectionHeading
             eyebrow="FAQ"
-            title="Questions, answered clearly."
+            title={
+              <>
+                Questions,{" "}
+                <em className="italic font-normal text-[#58745e]">answered clearly</em>.
+              </>
+            }
             description="Everything you need to know before your consultation."
           />
 

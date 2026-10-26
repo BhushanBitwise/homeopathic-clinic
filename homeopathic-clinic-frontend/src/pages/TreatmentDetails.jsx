@@ -43,8 +43,8 @@ function TreatmentDetails() {
     <div className="min-h-screen bg-[#f8faf8]">
       <Navbar />
 
-      <main className="pt-[76px]">
-        <section className="bg-white py-20 sm:py-28">
+      <main className="pt-20 sm:pt-24">
+        <section className="bg-white py-16 sm:py-24">
           <Container>
             <Link
               to="/treatments"

@@ -1,14 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowUpRight,
+  Award,
   Check,
+  CheckCircle2,
+  Clock,
   Clock3,
+  Gift,
   MapPin,
   MessageCircle,
+  Phone,
   ShieldCheck,
   Sparkles,
+  Star,
+  Video,
 } from "lucide-react";
 
 import Navbar from "../components/layout/Navbar";
@@ -16,13 +23,26 @@ import Footer from "../components/layout/Footer";
 import WhatsAppButton from "../components/common/WhatsAppButton";
 import Container from "../components/common/Container";
 import Button from "../components/common/Button";
+import ConsultationModal from "../components/common/ConsultationModal";
 
 import { getLocationBySlug, locations } from "../data/locations";
+import { getTopDoctorsByCity } from "../data/doctors";
 
-function LocationDetails() {
+export default function LocationDetails() {
   const { stateSlug, citySlug } = useParams();
-
   const location = getLocationBySlug(stateSlug, citySlug);
+
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [modalMode, setModalMode] = useState("chat");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const cityDoctors = getTopDoctorsByCity(citySlug || "pune", 5);
+
+  const handleOpenConsultation = (doctor, mode = "chat") => {
+    setSelectedDoctor(doctor);
+    setModalMode(mode);
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     if (!location) {
@@ -30,20 +50,16 @@ function LocationDetails() {
       return;
     }
 
-    document.title = `Homeopathy Consultation in ${location.city} | HealingCare`;
+    document.title = `Top 5 Homeopathic Doctors in ${location.city} | HealingCare Free Consultation`;
 
-    const description = `Explore personalized homeopathy consultation support for patients in ${location.city}, ${location.state}.`;
+    const description = `Find and consult the top 5 verified homeopathic doctors in ${location.city}, ${location.state}. First consultation is 100% Free on HealingCare.`;
 
-    let meta = document.querySelector(
-      'meta[name="description"]'
-    );
-
+    let meta = document.querySelector('meta[name="description"]');
     if (!meta) {
       meta = document.createElement("meta");
       meta.name = "description";
       document.head.appendChild(meta);
     }
-
     meta.setAttribute("content", description);
   }, [location]);
 
@@ -51,29 +67,22 @@ function LocationDetails() {
     return (
       <div className="min-h-screen bg-[#f8faf8]">
         <Navbar />
-
         <main className="grid min-h-[70vh] place-items-center px-6 pt-24">
           <div className="max-w-lg text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-800">
               Location
             </p>
-
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-              Location not found
+              City not found
             </h1>
-
             <p className="mt-4 text-sm leading-7 text-slate-500">
-              The city you are looking for is not available yet.
+              The city you are looking for is not listed yet.
             </p>
-
             <div className="mt-7">
-              <Button to="/locations">
-                Explore all locations
-              </Button>
+              <Button to="/locations">Explore all cities</Button>
             </div>
           </div>
         </main>
-
         <Footer />
         <WhatsAppButton />
       </div>
@@ -82,16 +91,12 @@ function LocationDetails() {
 
   const nearbyLocations = locations
     .filter(
-      (item) =>
-        item.slug !== location.slug &&
-        item.state === location.state
+      (item) => item.slug !== location.slug && item.state === location.state
     )
     .slice(0, 4);
 
   const whatsappMessage = encodeURIComponent(
-    `Hello HealingCare,
-
-I am from ${location.city}, ${location.state} and would like to know more about a homeopathy consultation.`
+    `Hello HealingCare,\n\nI am looking for the Top Homeopathic Doctor in ${location.city}, ${location.state} and would like to claim my FIRST FREE CONSULTATION.`
   );
 
   const whatsappUrl = `https://wa.me/918767907569?text=${whatsappMessage}`;
@@ -100,311 +105,263 @@ I am from ${location.city}, ${location.state} and would like to know more about 
     <div className="min-h-screen overflow-x-clip bg-[#f8faf8]">
       <Navbar />
 
-      <main>
-        {/* =====================================================
-            HERO
-        ====================================================== */}
-        <section className="relative overflow-hidden pt-32 sm:pt-40">
-          <div className="absolute right-[-120px] top-20 -z-10 size-[420px] rounded-full bg-emerald-100/50 blur-3xl" />
+      <main className="pt-24 sm:pt-28">
+        {/* Breadcrumb & City Hero */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f4f9f6] border-b border-slate-200/80 py-12 sm:py-16">
+          <div className="absolute right-[-100px] top-10 -z-10 size-[380px] rounded-full bg-emerald-100/40 blur-3xl" />
 
           <Container>
             <Link
               to="/locations"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full px-2 text-sm font-semibold text-slate-500 transition-colors hover:text-emerald-800"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-[#145c43] transition mb-6"
             >
-              <ArrowLeft size={16} />
-              All locations
+              <ArrowLeft size={15} />
+              <span>Back to all cities</span>
             </Link>
 
-            <div className="mt-10 grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
-              {/* Left */}
+            <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-800/10 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-emerald-800 shadow-sm">
-                  <MapPin size={14} />
-                  {location.city}, {location.state}
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-800/10 bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#145c43] shadow-xs">
+                  <MapPin size={13} />
+                  <span>{location.city}, {location.state}</span>
                 </div>
 
-                <h1 className="mt-7 max-w-4xl text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
-                  Homeopathy consultation
-                  <span className="block text-emerald-800">
-                    in {location.city}.
-                  </span>
+                <h1 className="mt-5 font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-950">
+                  Top 5 Homeopathic Doctors in{" "}
+                  <em className="italic font-bold text-[#145c43]">{location.city}</em>
                 </h1>
 
-                <p className="mt-7 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+                <p className="mt-5 text-sm leading-relaxed text-slate-600 sm:text-base">
                   {location.description}
                 </p>
 
-                {/* CTA BUTTONS */}
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Button
-                    to="/appointment"
-                    variant="primary"
+                {/* Offer Callout */}
+                <div className="mt-6 flex items-center gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-3 text-xs font-medium text-amber-900 max-w-lg">
+                  <Gift size={18} className="text-amber-600 shrink-0" />
+                  <span>
+                    <strong>First 5-Min Consultation is 100% Free</strong> with any verified {location.city} doctor.
+                  </span>
+                </div>
+
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <a
+                    href="#city-top-doctors"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#145c43] px-6 text-sm font-semibold text-white shadow-md hover:bg-[#0e4532]"
                   >
-                    Book an appointment
-                  </Button>
+                    <span>View Top 5 Doctors</span>
+                    <ArrowUpRight size={16} />
+                  </a>
 
                   <a
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-slate-900/10 bg-white px-5 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-800/20 hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700/30 focus-visible:ring-offset-2"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-900 shadow-xs hover:bg-slate-50"
                   >
-                    <MessageCircle size={17} />
-
-                    <span>Ask on WhatsApp</span>
+                    <MessageCircle size={17} className="text-[#25d366]" />
+                    <span>WhatsApp Enquiry</span>
                   </a>
                 </div>
               </div>
 
-              {/* Right card */}
-              <div className="rounded-[2rem] border border-slate-900/8 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] sm:p-8">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800">
-                  <Sparkles size={21} />
+              {/* City Features Card */}
+              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xl shadow-slate-900/5 sm:p-8">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-800">
+                  <Sparkles size={16} className="text-amber-500" />
+                  <span>HealingCare Standard in {location.city}</span>
                 </div>
 
-                <h2 className="mt-6 text-xl font-semibold text-slate-950">
-                  A thoughtful consultation experience
-                </h2>
+                <h3 className="mt-3 text-xl font-bold text-slate-950">
+                  Why patients in {location.city} trust HealingCare
+                </h3>
 
-                <p className="mt-3 text-sm leading-7 text-slate-500">
-                  Your consultation starts with understanding your
-                  individual concerns rather than taking a one-size-fits-all
-                  approach.
-                </p>
-
-                <div className="mt-7 space-y-4">
+                <div className="mt-6 space-y-3.5">
                   {location.highlights.map((highlight) => (
-                    <div
-                      key={highlight}
-                      className="flex items-start gap-3"
-                    >
-                      <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-800">
-                        <Check size={14} />
+                    <div key={highlight} className="flex items-start gap-3 text-xs sm:text-sm text-slate-700">
+                      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[#145c43]">
+                        <Check size={12} strokeWidth={3} />
                       </span>
-
-                      <span className="text-sm font-medium leading-6 text-slate-700">
-                        {highlight}
-                      </span>
+                      <span>{highlight}</span>
                     </div>
                   ))}
+                  <div className="flex items-start gap-3 text-xs sm:text-sm text-slate-700">
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[#145c43]">
+                      <Check size={12} strokeWidth={3} />
+                    </span>
+                    <span>Express doorstep medicine delivery to all pincodes in {location.city}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </Container>
         </section>
 
-        {/* =====================================================
-            BENEFITS
-        ====================================================== */}
-        <section className="py-20 sm:py-24">
+        {/* City's Top 5 Doctors Section */}
+        <section id="city-top-doctors" className="py-14 sm:py-20 bg-white">
           <Container>
-            <div className="grid gap-5 md:grid-cols-3">
-              <div className="rounded-3xl border border-slate-900/8 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="flex size-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800">
-                  <ShieldCheck size={20} />
-                </div>
-
-                <h3 className="mt-5 font-semibold text-slate-950">
-                  Personalized care
-                </h3>
-
-                <p className="mt-3 text-sm leading-7 text-slate-500">
-                  Consultation is centered around your individual
-                  symptoms, concerns and overall wellbeing.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-900/8 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="flex size-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800">
-                  <Clock3 size={20} />
-                </div>
-
-                <h3 className="mt-5 font-semibold text-slate-950">
-                  Convenient appointments
-                </h3>
-
-                <p className="mt-3 text-sm leading-7 text-slate-500">
-                  Choose a suitable consultation time and connect
-                  through the clinic's appointment flow.
-                </p>
-              </div>
-
-              <div className="rounded-3xl border border-slate-900/8 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="flex size-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800">
-                  <MessageCircle size={20} />
-                </div>
-
-                <h3 className="mt-5 font-semibold text-slate-950">
-                  Easy communication
-                </h3>
-
-                <p className="mt-3 text-sm leading-7 text-slate-500">
-                  Get in touch with the clinic through WhatsApp for
-                  appointment-related questions.
-                </p>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        {/* =====================================================
-            WHY HEALINGCARE
-        ====================================================== */}
-        <section className="border-y border-slate-900/5 bg-white py-20 sm:py-24">
-          <Container>
-            <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-800">
-                  Why HealingCare
-                </p>
-
-                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.035em] text-slate-950 sm:text-4xl">
-                  A care experience designed around the patient.
+                <span className="text-xs font-bold uppercase tracking-wider text-[#145c43]">
+                  Verified Specialists
+                </span>
+                <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+                  Meet the Top 5 Doctors for {location.city}
                 </h2>
+                <p className="mt-2 text-xs sm:text-sm text-slate-500">
+                  Handpicked MD & senior homeopathic consultants serving {location.city}.
+                </p>
               </div>
 
-              <div className="space-y-6">
-                <div className="border-b border-slate-900/8 pb-6">
-                  <h3 className="font-semibold text-slate-950">
-                    Understand first
-                  </h3>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-bold text-amber-900 w-fit">
+                <Gift size={13} className="text-amber-600" />
+                First Consultation Free
+              </span>
+            </div>
 
-                  <p className="mt-2 text-sm leading-7 text-slate-500">
-                    The consultation begins by understanding the
-                    patient's concern, symptoms and relevant context.
-                  </p>
-                </div>
+            {/* Doctor Cards Grid */}
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {cityDoctors.map((doc, idx) => {
+                const isFirst = idx === 0;
+                return (
+                  <article
+                    key={doc.id}
+                    className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                      isFirst
+                        ? "border-amber-400 shadow-md ring-1 ring-amber-400/30"
+                        : "border-slate-200"
+                    }`}
+                  >
+                    <div>
+                      {/* Photo */}
+                      <div className="relative aspect-[4/3.8] overflow-hidden bg-slate-100">
+                        <img
+                          src={doc.image}
+                          alt={doc.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            e.target.src = "/images/doctors/doctor1.webp";
+                          }}
+                        />
 
-                <div className="border-b border-slate-900/8 pb-6">
-                  <h3 className="font-semibold text-slate-950">
-                    Personalized guidance
-                  </h3>
+                        {/* Top Rank Badge */}
+                        <div className="absolute left-3 top-3">
+                          {isFirst ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-0.5 text-[10px] font-extrabold text-slate-950 shadow-md">
+                              <Award size={11} />
+                              #1 in {location.city}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-950/80 px-2 py-0.5 text-[10px] font-semibold text-emerald-200">
+                              #{doc.rankInCity || idx + 1}
+                            </span>
+                          )}
+                        </div>
 
-                  <p className="mt-2 text-sm leading-7 text-slate-500">
-                    Recommendations are approached around the
-                    individual's needs instead of using a generic
-                    experience for everyone.
-                  </p>
-                </div>
+                        {/* Online Indicator */}
+                        <div className="absolute right-3 top-3">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-950/80 px-2 py-0.5 text-[10px] text-emerald-300 backdrop-blur-md">
+                            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            {doc.isOnline ? "Online" : "Wait 5m"}
+                          </span>
+                        </div>
+                      </div>
 
-                <div>
-                  <h3 className="font-semibold text-slate-950">
-                    Continued support
-                  </h3>
+                      {/* Info */}
+                      <div className="p-4">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="flex items-center gap-1 font-bold text-amber-500">
+                            <Star size={12} className="fill-amber-400 text-amber-400" />
+                            {doc.rating}
+                          </span>
+                          <span className="text-[11px] text-slate-400">
+                            {doc.totalConsultations}
+                          </span>
+                        </div>
 
-                  <p className="mt-2 text-sm leading-7 text-slate-500">
-                    Follow-up communication helps patients continue
-                    their care journey with clarity.
-                  </p>
-                </div>
-              </div>
+                        <h3 className="mt-2 text-base font-bold text-slate-950 group-hover:text-[#145c43] transition">
+                          {doc.name}
+                        </h3>
+                        <p className="text-xs font-semibold text-emerald-800 truncate">
+                          {doc.qualification}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500 line-clamp-1">
+                          {doc.role}
+                        </p>
+                        <p className="mt-2 text-xs text-slate-600 line-clamp-2 bg-[#f8faf8] p-2 rounded-xl">
+                          {doc.specialization}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Bottom Consultation trigger */}
+                    <div className="p-4 pt-0">
+                      <div className="border-t border-slate-100 pt-3">
+                        <div className="flex items-center justify-between text-xs mb-2">
+                          <span className="font-extrabold text-[#145c43]">FREE (₹0)</span>
+                          <span className="text-[10px] line-through text-slate-400">₹{doc.originalPrice || 650}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenConsultation(doc, "chat")}
+                            className="flex items-center justify-center gap-1 rounded-xl border border-emerald-800/20 bg-emerald-50 py-2 text-xs font-bold text-[#145c43] hover:bg-[#145c43] hover:text-white transition"
+                          >
+                            <MessageCircle size={13} />
+                            <span>Chat</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenConsultation(doc, "call")}
+                            className="flex items-center justify-center gap-1 rounded-xl bg-[#145c43] py-2 text-xs font-bold text-white hover:bg-[#0e4532] transition"
+                          >
+                            <Video size={13} />
+                            <span>Meet</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </Container>
         </section>
 
-        {/* =====================================================
-            CTA
-        ====================================================== */}
-        <section className="py-20 sm:py-24">
-          <Container>
-            <div className="rounded-[2rem] bg-[#12372a] px-6 py-12 text-white sm:px-12 sm:py-16">
-              <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-200">
-                    {location.city}
-                  </p>
-
-                  <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
-                    Ready to discuss your health concern?
-                  </h2>
-
-                  <p className="mt-5 max-w-xl text-sm leading-7 text-emerald-50/70">
-                    Book a consultation or contact the clinic directly
-                    through WhatsApp.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                  {/* WORKING WHITE BUTTON */}
-                  <Button
-                    to="/appointment"
-                    variant="light"
-                  >
-                    Book appointment
-                  </Button>
-
-                  {/* WORKING OUTLINE BUTTON */}
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 px-5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#12372a]"
-                  >
-                    <MessageCircle size={17} />
-
-                    <span>WhatsApp</span>
-
-                    <ArrowUpRight size={17} />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-
-        {/* =====================================================
-            NEARBY LOCATIONS
-        ====================================================== */}
+        {/* Nearby Cities */}
         {nearbyLocations.length > 0 && (
-          <section className="pb-20 sm:pb-24">
+          <section className="py-14 sm:py-20 border-t border-slate-200/80">
             <Container>
-              <div className="flex items-end justify-between gap-6">
+              <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-800">
-                    Explore nearby
-                  </p>
-
-                  <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
-                    More locations in {location.state}
-                  </h2>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Explore Other Cities
+                  </span>
+                  <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
+                    More Locations in {location.state}
+                  </h3>
                 </div>
 
                 <Link
                   to="/locations"
-                  className="hidden min-h-11 items-center gap-2 rounded-full px-2 text-sm font-semibold text-emerald-800 sm:inline-flex"
+                  className="text-xs sm:text-sm font-bold text-[#145c43] hover:underline"
                 >
-                  View all
-                  <ArrowUpRight size={16} />
+                  View all Indian cities →
                 </Link>
               </div>
 
-              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {nearbyLocations.map((item) => (
                   <Link
                     key={item.slug}
                     to={item.path}
-                    className="group rounded-2xl border border-slate-900/8 bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                    className="group rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-md"
                   >
                     <div className="flex items-center justify-between">
-                      <MapPin
-                        size={18}
-                        className="text-emerald-800"
-                      />
-
-                      <ArrowUpRight
-                        size={16}
-                        className="text-slate-300 transition group-hover:text-emerald-700"
-                      />
+                      <MapPin size={17} className="text-[#145c43]" />
+                      <ArrowUpRight size={15} className="text-slate-300 group-hover:text-[#145c43]" />
                     </div>
-
-                    <h3 className="mt-5 font-semibold text-slate-950">
-                      {item.city}
-                    </h3>
-
-                    <p className="mt-1 text-xs text-slate-500">
-                      {item.region}
-                    </p>
+                    <h4 className="mt-4 font-bold text-slate-900">{item.city}</h4>
+                    <p className="text-xs text-slate-500 mt-0.5">Top 5 Doctors Available</p>
                   </Link>
                 ))}
               </div>
@@ -414,10 +371,15 @@ I am from ${location.city}, ${location.state} and would like to know more about 
       </main>
 
       <Footer />
-
       <WhatsAppButton />
+
+      {/* Consultation Modal */}
+      <ConsultationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        doctor={selectedDoctor}
+        initialMode={modalMode}
+      />
     </div>
   );
 }
-
-export default LocationDetails;

@@ -4,481 +4,581 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  Gift,
+  MapPin,
   MessageCircle,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  User,
+  Video,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Container from "../components/common/Container";
-import { createAppointmentMessage, openWhatsApp } from "../utils/whatsapp";
+import WhatsAppButton from "../components/common/WhatsAppButton";
+import doctors, { featuredCities } from "../data/doctors";
 
-const consultationTypes = [
-  "Clinic Visit",
-  "Online Consultation",
+const consultationModes = [
+  {
+    id: "Free 5-Min Chat",
+    title: "Live Chat",
+    subtitle: "Instant messaging with doctor",
+    badge: "5 Mins FREE",
+    icon: MessageCircle,
+  },
+  {
+    id: "Free Video Meeting",
+    title: "Video Call Meeting",
+    subtitle: "Face-to-face HD consultation",
+    badge: "Free 1st Session",
+    icon: Video,
+  },
+  {
+    id: "Clinic Visit",
+    title: "In-Clinic Visit",
+    subtitle: "In-person physical examination",
+    badge: "Pune & City Clinics",
+    icon: MapPin,
+  },
 ];
 
 const timeSlots = [
-  "09:00 AM",
   "09:30 AM",
   "10:00 AM",
   "10:30 AM",
-  "11:00 AM",
+  "11:30 AM",
+  "12:00 PM",
   "04:00 PM",
   "04:30 PM",
   "05:00 PM",
-  "05:30 PM",
+  "06:00 PM",
+  "06:30 PM",
+  "07:00 PM",
+];
+
+const quickConcerns = [
+  "PCOD & Irregular Periods",
+  "Hair Fall & Dandruff",
+  "Chronic Skin Allergy / Eczema",
+  "Acidity, Gas & IBS",
+  "Asthma & Sinusitis",
+  "Child Immunity & Frequent Colds",
+  "Joint Pain & Arthritis",
+  "Stress, Anxiety & Insomnia",
 ];
 
 function getDateOptions() {
   const dates = [];
-
-  for (let i = 1; i <= 7; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
-
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
     dates.push({
-      value: date.toISOString().split("T")[0],
-      day: date.toLocaleDateString("en-IN", {
-        weekday: "short",
-      }),
-      date: date.getDate(),
-      month: date.toLocaleDateString("en-IN", {
-        month: "short",
-      }),
+      value: d.toISOString().split("T")[0],
+      day: i === 0 ? "Today" : d.toLocaleDateString("en-IN", { weekday: "short" }),
+      date: d.getDate(),
+      month: d.toLocaleDateString("en-IN", { month: "short" }),
     });
   }
-
   return dates;
 }
 
-function Appointment() {
+export default function Appointment() {
   const dates = useMemo(() => getDateOptions(), []);
 
   const [step, setStep] = useState(1);
-
+  const [selectedCitySlug, setSelectedCitySlug] = useState("pune");
   const [form, setForm] = useState({
-    consultationType: "Clinic Visit",
+    consultationType: "Free Video Meeting",
+    doctorId: "pune-dr-pranita-kanade",
     date: dates[0]?.value || "",
-    time: "",
+    time: "10:30 AM",
     name: "",
     phone: "",
     concern: "",
+    language: "English / Hindi",
   });
-
   const [error, setError] = useState("");
 
-  const updateForm = (field, value) => {
-    setForm((current) => ({
-      ...current,
-      [field]: value,
-    }));
+  const cityDoctors = useMemo(() => {
+    return doctors.filter((d) => d.citySlug === selectedCitySlug);
+  }, [selectedCitySlug]);
 
+  const selectedDoctorObj = useMemo(() => {
+    return (
+      doctors.find((d) => d.id === form.doctorId) ||
+      cityDoctors[0] ||
+      doctors[0]
+    );
+  }, [form.doctorId, cityDoctors]);
+
+  const updateForm = (field, value) => {
+    setForm((curr) => ({ ...curr, [field]: value }));
     setError("");
   };
 
   const nextStep = () => {
     if (step === 1 && !form.consultationType) {
-      setError("Please select a consultation type.");
+      setError("Please select your consultation mode.");
       return;
     }
-
     if (step === 2 && (!form.date || !form.time)) {
-      setError("Please select a date and time.");
+      setError("Please choose a date and time slot.");
       return;
     }
-
-    if (
-      step === 3 &&
-      (!form.name.trim() ||
-        !/^[6-9]\d{9}$/.test(form.phone))
-    ) {
-      setError(
-        "Please enter your name and a valid 10-digit Indian mobile number."
-      );
-      return;
+    if (step === 3) {
+      if (!form.name.trim() || !/^[6-9]\d{9}$/.test(form.phone.trim())) {
+        setError("Please enter your name and a valid 10-digit Indian WhatsApp mobile number.");
+        return;
+      }
     }
-
-    setStep((current) => current + 1);
+    setStep((c) => c + 1);
   };
 
-  const previousStep = () => {
+  const prevStep = () => {
     setError("");
-    setStep((current) => current - 1);
+    setStep((c) => c - 1);
   };
 
-  const confirmAppointment = () => {
-    const message = createAppointmentMessage(form);
-
-    openWhatsApp(message);
+  const confirmAndLaunchWhatsApp = () => {
+    const message = encodeURIComponent(
+      `Hello HealingCare,\n\nI want to book my *FIRST FREE CONSULTATION* with *${selectedDoctorObj.name}* (${selectedDoctorObj.city}).\n\n*Patient Name:* ${form.name}\n*Phone:* ${form.phone}\n*Mode:* ${form.consultationType}\n*Date:* ${form.date}\n*Time:* ${form.time}\n*Concern:* ${form.concern || "General Homeopathic Advice"}\n*Preferred Language:* ${form.language}\n\n*Amount to Pay:* ₹0 (Free Voucher Applied)\n\nPlease confirm my slot.`
+    );
+    window.open(`https://wa.me/918767907569?text=${message}`, "_blank");
   };
-
-  const selectedDate = dates.find(
-    (item) => item.value === form.date
-  );
 
   return (
-    <div className="min-h-screen bg-[#f8faf8]">
+    <div className="min-h-screen overflow-x-clip bg-[#f8faf8]">
       <Navbar />
 
-      <main className="px-5 pb-20 pt-[120px] sm:px-7">
+      <main className="pt-24 sm:pt-28 pb-20">
         <Container>
-          <div className="mx-auto max-w-3xl">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-emerald-800"
-            >
-              <ArrowLeft size={16} />
-              Back to home
-            </Link>
-
-            <div className="mt-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                Appointment
-              </p>
-
-              <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
-                Book your consultation.
-              </h1>
-
-              <p className="mt-4 text-sm leading-6 text-slate-500 sm:text-base">
-                Choose your preferred option and confirm the request directly
-                through WhatsApp.
-              </p>
-            </div>
-
-            {/* Progress */}
-            <div className="mt-10 flex items-center gap-2">
-              {[1, 2, 3, 4].map((item) => (
-                <div key={item} className="flex flex-1 items-center gap-2">
-                  <div
-                    className={`grid size-8 shrink-0 place-items-center rounded-full text-xs font-bold ${
-                      step >= item
-                        ? "bg-[#145c43] text-white"
-                        : "bg-white text-slate-400"
-                    }`}
-                  >
-                    {step > item ? <Check size={14} /> : item}
-                  </div>
-
-                  {item !== 4 && (
-                    <div
-                      className={`h-px flex-1 ${
-                        step > item
-                          ? "bg-emerald-700"
-                          : "bg-slate-200"
-                      }`}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Card */}
-            <div className="mt-8 overflow-hidden rounded-[2rem] border border-slate-900/8 bg-white shadow-[0_20px_70px_rgba(15,23,42,0.06)]">
-              <div className="p-6 sm:p-9">
-                {/* STEP 1 */}
-                {step === 1 && (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                      Step 1
-                    </p>
-
-                    <h2 className="mt-2 text-2xl font-semibold text-slate-950">
-                      Choose consultation type
-                    </h2>
-
-                    <div className="mt-7 grid gap-4 sm:grid-cols-2">
-                      {consultationTypes.map((type) => {
-                        const active =
-                          form.consultationType === type;
-
-                        return (
-                          <button
-                            key={type}
-                            type="button"
-                            onClick={() =>
-                              updateForm("consultationType", type)
-                            }
-                            className={`rounded-2xl border p-5 text-left transition ${
-                              active
-                                ? "border-emerald-700 bg-emerald-50 ring-2 ring-emerald-700/10"
-                                : "border-slate-900/8 hover:border-emerald-700/20"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-semibold text-slate-900">
-                                {type}
-                              </span>
-
-                              {active && (
-                                <CheckCircle2
-                                  size={19}
-                                  className="text-emerald-700"
-                                />
-                              )}
-                            </div>
-
-                            <p className="mt-2 text-xs leading-5 text-slate-500">
-                              {type === "Clinic Visit"
-                                ? "Visit the clinic for an in-person consultation."
-                                : "Consult remotely where online consultation is available."}
-                            </p>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* STEP 2 */}
-                {step === 2 && (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                      Step 2
-                    </p>
-
-                    <h2 className="mt-2 text-2xl font-semibold text-slate-950">
-                      Select date & time
-                    </h2>
-
-                    <div className="mt-7">
-                      <p className="text-sm font-semibold text-slate-900">
-                        Available dates
-                      </p>
-
-                      <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7">
-                        {dates.map((date) => {
-                          const active = form.date === date.value;
-
-                          return (
-                            <button
-                              key={date.value}
-                              type="button"
-                              onClick={() =>
-                                updateForm("date", date.value)
-                              }
-                              className={`rounded-2xl border px-2 py-3 text-center ${
-                                active
-                                  ? "border-emerald-700 bg-emerald-50 text-emerald-800"
-                                  : "border-slate-900/8 bg-white text-slate-600"
-                              }`}
-                            >
-                              <span className="block text-[10px] uppercase">
-                                {date.day}
-                              </span>
-
-                              <span className="mt-1 block text-lg font-bold">
-                                {date.date}
-                              </span>
-
-                              <span className="block text-[10px]">
-                                {date.month}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="mt-8">
-                      <p className="text-sm font-semibold text-slate-900">
-                        Available times
-                      </p>
-
-                      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                        {timeSlots.map((time) => {
-                          const active = form.time === time;
-
-                          return (
-                            <button
-                              key={time}
-                              type="button"
-                              onClick={() =>
-                                updateForm("time", time)
-                              }
-                              className={`rounded-xl border px-4 py-3 text-sm font-medium ${
-                                active
-                                  ? "border-emerald-700 bg-emerald-50 text-emerald-800"
-                                  : "border-slate-900/8 text-slate-600 hover:border-emerald-700/20"
-                              }`}
-                            >
-                              {time}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* STEP 3 */}
-                {step === 3 && (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                      Step 3
-                    </p>
-
-                    <h2 className="mt-2 text-2xl font-semibold text-slate-950">
-                      Your details
-                    </h2>
-
-                    <div className="mt-7 space-y-5">
-                      <label className="block">
-                        <span className="text-sm font-medium text-slate-700">
-                          Full name
-                        </span>
-
-                        <input
-                          value={form.name}
-                          onChange={(event) =>
-                            updateForm("name", event.target.value)
-                          }
-                          placeholder="Enter your full name"
-                          className="mt-2 h-12 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-sm outline-none transition focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
-                        />
-                      </label>
-
-                      <label className="block">
-                        <span className="text-sm font-medium text-slate-700">
-                          Mobile number
-                        </span>
-
-                        <input
-                          value={form.phone}
-                          onChange={(event) =>
-                            updateForm(
-                              "phone",
-                              event.target.value.replace(/\D/g, "").slice(0, 10)
-                            )
-                          }
-                          inputMode="numeric"
-                          placeholder="10-digit mobile number"
-                          className="mt-2 h-12 w-full rounded-xl border border-slate-900/10 bg-white px-4 text-sm outline-none transition focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
-                        />
-                      </label>
-
-                      <label className="block">
-                        <span className="text-sm font-medium text-slate-700">
-                          What would you like help with?
-                        </span>
-
-                        <textarea
-                          value={form.concern}
-                          onChange={(event) =>
-                            updateForm("concern", event.target.value)
-                          }
-                          rows={4}
-                          placeholder="Briefly describe your concern..."
-                          className="mt-2 w-full resize-none rounded-xl border border-slate-900/10 bg-white p-4 text-sm outline-none transition focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                )}
-
-                {/* STEP 4 */}
-                {step === 4 && (
-                  <div>
-                    <div className="grid size-14 place-items-center rounded-full bg-emerald-50 text-emerald-700">
-                      <Check size={26} />
-                    </div>
-
-                    <p className="mt-7 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
-                      Final step
-                    </p>
-
-                    <h2 className="mt-2 text-2xl font-semibold text-slate-950">
-                      Review your appointment
-                    </h2>
-
-                    <div className="mt-7 divide-y divide-slate-900/8 rounded-2xl border border-slate-900/8">
-                      {[
-                        ["Name", form.name],
-                        ["Phone", form.phone],
-                        ["Consultation", form.consultationType],
-                        [
-                          "Date",
-                          selectedDate
-                            ? `${selectedDate.day}, ${selectedDate.date} ${selectedDate.month}`
-                            : form.date,
-                        ],
-                        ["Time", form.time],
-                        ["Concern", form.concern || "Not specified"],
-                      ].map(([label, value]) => (
-                        <div
-                          key={label}
-                          className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5"
-                        >
-                          <span className="text-xs text-slate-400">
-                            {label}
-                          </span>
-
-                          <span className="text-sm font-medium text-slate-900 sm:text-right">
-                            {value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={confirmAppointment}
-                      className="mt-7 flex min-h-13 w-full items-center justify-center gap-2 rounded-full bg-[#1f9d61] px-6 text-sm font-semibold text-white shadow-lg shadow-emerald-900/10 transition hover:bg-[#188452]"
-                    >
-                      <MessageCircle size={19} />
-                      Confirm via WhatsApp
-                    </button>
-                  </div>
-                )}
-
-                {error && (
-                  <p className="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {error}
-                  </p>
-                )}
-
-                {/* Controls */}
-                {step < 4 && (
-                  <div className="mt-9 flex items-center justify-between gap-4 border-t border-slate-900/8 pt-6">
-                    <button
-                      type="button"
-                      onClick={previousStep}
-                      disabled={step === 1}
-                      className="text-sm font-semibold text-slate-500 disabled:invisible"
-                    >
-                      Back
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={nextStep}
-                      className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#145c43] px-6 text-sm font-semibold text-white transition hover:bg-[#104d39]"
-                    >
-                      Continue
-                      <ArrowRight size={17} />
-                    </button>
-                  </div>
-                )}
-
-                {step === 4 && (
-                  <button
-                    type="button"
-                    onClick={previousStep}
-                    className="mt-5 text-sm font-semibold text-slate-500 hover:text-emerald-800"
-                  >
-                    ← Edit appointment
-                  </button>
-                )}
+          {/* Top Astrotalk-style Voucher Announcement */}
+          <div className="mx-auto max-w-3xl mb-8 rounded-3xl border border-amber-300 bg-gradient-to-r from-amber-50 to-emerald-50 p-4 text-xs sm:text-sm font-medium text-amber-950 shadow-sm flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-9 place-items-center rounded-xl bg-amber-400 text-slate-950 font-bold shrink-0">
+                <Gift size={18} />
+              </span>
+              <div>
+                <strong className="block font-bold text-amber-900">
+                  New Patient Welcome Voucher Activated
+                </strong>
+                <span className="text-slate-600">
+                  Your first 5-min chat or video consultation with India&apos;s top homeopaths is 100% Free.
+                </span>
               </div>
             </div>
+
+            <span className="hidden sm:inline-block rounded-lg bg-amber-400 px-2.5 py-1 text-xs font-black text-slate-950 shrink-0">
+              ₹0 PAYABLE
+            </span>
+          </div>
+
+          <div className="mx-auto max-w-3xl text-center mb-8">
+            <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-slate-950">
+              Book Your{" "}
+              <em className="italic font-bold text-[#145c43]">Free Consultation</em>
+            </h1>
+            <p className="mt-2 text-xs sm:text-sm text-slate-500">
+              Connect with verified top-ranked homeopaths in Pune, Mumbai, Delhi & across India.
+            </p>
+
+            {/* Stepper Dots */}
+            <div className="mt-6 flex items-center justify-center gap-2">
+              {[1, 2, 3, 4].map((s) => (
+                <div
+                  key={s}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    s === step
+                      ? "w-8 bg-[#145c43]"
+                      : s < step
+                      ? "w-5 bg-emerald-700/50"
+                      : "w-5 bg-slate-200"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Form Container Card */}
+          <div className="mx-auto max-w-2xl rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xl shadow-slate-900/5 sm:p-8">
+            {error && (
+              <div className="mb-5 rounded-2xl bg-red-50 p-3 text-xs font-semibold text-red-700 border border-red-200">
+                {error}
+              </div>
+            )}
+
+            {/* STEP 1: Choose Mode & Doctor */}
+            {step === 1 && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                    1. Select Consultation Mode
+                  </label>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {consultationModes.map((item) => {
+                      const Icon = item.icon;
+                      const isSelected = form.consultationType === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => updateForm("consultationType", item.id)}
+                          className={`flex flex-col items-start p-4 rounded-2xl border text-left transition ${
+                            isSelected
+                              ? "border-[#145c43] bg-emerald-50/70 ring-2 ring-[#145c43]"
+                              : "border-slate-200 bg-white hover:bg-slate-50"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <span className="grid size-9 place-items-center rounded-xl bg-white text-[#145c43] shadow-xs">
+                              <Icon size={18} />
+                            </span>
+                            <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-extrabold text-amber-900">
+                              {item.badge}
+                            </span>
+                          </div>
+                          <span className="mt-3 text-sm font-bold text-slate-900">
+                            {item.title}
+                          </span>
+                          <span className="mt-0.5 text-[11px] text-slate-500">
+                            {item.subtitle}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* City & Doctor Selector */}
+                <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-slate-100">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Select City
+                    </label>
+                    <select
+                      value={selectedCitySlug}
+                      onChange={(e) => {
+                        setSelectedCitySlug(e.target.value);
+                        const firstDoc = doctors.find((d) => d.citySlug === e.target.value);
+                        if (firstDoc) updateForm("doctorId", firstDoc.id);
+                      }}
+                      className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] py-2.5 px-3 text-xs sm:text-sm font-semibold text-slate-800 outline-none focus:border-[#145c43]"
+                    >
+                      {featuredCities.map((city) => (
+                        <option key={city.slug} value={city.slug}>
+                          {city.name} ({city.badge})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Choose Doctor
+                    </label>
+                    <select
+                      value={form.doctorId}
+                      onChange={(e) => updateForm("doctorId", e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] py-2.5 px-3 text-xs sm:text-sm font-semibold text-slate-800 outline-none focus:border-[#145c43]"
+                    >
+                      {cityDoctors.map((doc) => (
+                        <option key={doc.id} value={doc.id}>
+                          {doc.name} · {doc.role?.slice(0, 25)} (Rank #{doc.rankInCity})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Doctor Preview Badge */}
+                <div className="rounded-2xl border border-emerald-100 bg-[#f4f9f6] p-3.5 flex items-center gap-3">
+                  <img
+                    src={selectedDoctorObj.image}
+                    alt={selectedDoctorObj.name}
+                    className="size-14 rounded-2xl object-cover shrink-0 border border-emerald-200"
+                    onError={(e) => {
+                      e.target.src = "/images/doctors/doctor1.webp";
+                    }}
+                  />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-slate-900 text-sm">
+                        {selectedDoctorObj.name}
+                      </span>
+                      <span className="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded font-bold">
+                        {selectedDoctorObj.rating}★
+                      </span>
+                    </div>
+                    <p className="text-xs text-emerald-800 font-semibold truncate">
+                      {selectedDoctorObj.qualification} · {selectedDoctorObj.city}
+                    </p>
+                    <p className="text-[11px] text-slate-500 truncate">
+                      {selectedDoctorObj.specialization}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={nextStep}
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#145c43] py-3.5 text-sm font-bold text-white shadow-md hover:bg-[#0e4532]"
+                >
+                  <span>Continue to Date & Time</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* STEP 2: Choose Date & Time Slot */}
+            {step === 2 && (
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                    2. Select Consultation Date
+                  </label>
+                  <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                    {dates.map((item) => {
+                      const isSelected = form.date === item.value;
+                      return (
+                        <button
+                          key={item.value}
+                          type="button"
+                          onClick={() => updateForm("date", item.value)}
+                          className={`flex flex-col items-center p-2.5 rounded-2xl border text-center transition ${
+                            isSelected
+                              ? "border-[#145c43] bg-[#145c43] text-white"
+                              : "border-slate-200 bg-white text-slate-800 hover:bg-slate-50"
+                          }`}
+                        >
+                          <span className={`text-[10px] font-bold uppercase ${isSelected ? "text-emerald-200" : "text-slate-400"}`}>
+                            {item.day}
+                          </span>
+                          <span className="text-base font-extrabold mt-0.5">
+                            {item.date}
+                          </span>
+                          <span className={`text-[10px] ${isSelected ? "text-emerald-200" : "text-slate-400"}`}>
+                            {item.month}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                    Select Convenient Time Slot
+                  </label>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {timeSlots.map((slot) => {
+                      const isSelected = form.time === slot;
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => updateForm("time", slot)}
+                          className={`py-2 px-3 rounded-xl border text-xs font-bold transition ${
+                            isSelected
+                              ? "border-[#145c43] bg-emerald-50 text-[#145c43] ring-1 ring-[#145c43]"
+                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {slot}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="flex-1 rounded-2xl border border-slate-200 py-3 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#145c43] py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#0e4532]"
+                  >
+                    <span>Patient Details</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: Patient Information & Concern */}
+            {step === 3 && (
+              <div className="space-y-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Patient Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={form.name}
+                      onChange={(e) => updateForm("name", e.target.value)}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] py-2.5 px-3.5 text-sm text-slate-900 outline-none focus:border-[#145c43] focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      WhatsApp Mobile Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={form.phone}
+                      onChange={(e) => updateForm("phone", e.target.value)}
+                      placeholder="10-digit mobile number"
+                      className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] py-2.5 px-3.5 text-sm text-slate-900 outline-none focus:border-[#145c43] focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                    Select Your Health Concern
+                  </label>
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {quickConcerns.map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => updateForm("concern", item)}
+                        className={`rounded-full px-2.5 py-1 text-xs transition ${
+                          form.concern === item
+                            ? "bg-[#145c43] text-white font-bold"
+                            : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={form.concern}
+                    onChange={(e) => updateForm("concern", e.target.value)}
+                    placeholder="Describe main symptoms, since when you have them, etc..."
+                    className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] p-3 text-sm text-slate-900 outline-none focus:border-[#145c43] focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Preferred Language
+                  </label>
+                  <select
+                    value={form.language}
+                    onChange={(e) => updateForm("language", e.target.value)}
+                    className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] py-2.5 px-3 text-sm text-slate-800 outline-none focus:border-[#145c43]"
+                  >
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Marathi">Marathi</option>
+                    <option value="English / Hindi">English / Hindi</option>
+                  </select>
+                </div>
+
+                <div className="flex gap-3 pt-3">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="flex-1 rounded-2xl border border-slate-200 py-3 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#145c43] py-3 text-xs sm:text-sm font-bold text-white shadow-md hover:bg-[#0e4532]"
+                  >
+                    <span>Review & Confirm</span>
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: Summary & Confirm */}
+            {step === 4 && (
+              <div className="space-y-6">
+                <div className="rounded-2xl border border-slate-200 bg-[#f8faf8] p-4 text-xs sm:text-sm space-y-3">
+                  <div className="flex justify-between border-b border-slate-200/60 pb-2">
+                    <span className="text-slate-500">Doctor:</span>
+                    <span className="font-bold text-slate-900">{selectedDoctorObj.name} ({selectedDoctorObj.city})</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/60 pb-2">
+                    <span className="text-slate-500">Mode:</span>
+                    <span className="font-bold text-slate-900">{form.consultationType}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/60 pb-2">
+                    <span className="text-slate-500">Slot:</span>
+                    <span className="font-bold text-slate-900">{form.date} at {form.time}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/60 pb-2">
+                    <span className="text-slate-500">Patient:</span>
+                    <span className="font-bold text-slate-900">{form.name} (+91 {form.phone})</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/60 pb-2">
+                    <span className="text-slate-500">Concern:</span>
+                    <span className="font-bold text-slate-900">{form.concern || "General Homeopathy"}</span>
+                  </div>
+
+                  {/* Voucher calculation */}
+                  <div className="pt-2 text-xs">
+                    <div className="flex justify-between text-slate-500">
+                      <span>Standard Consultation Fee</span>
+                      <span className="line-through">₹{selectedDoctorObj.originalPrice || 650}</span>
+                    </div>
+                    <div className="flex justify-between text-[#145c43] font-bold mt-1">
+                      <span>First Consultation Free Voucher</span>
+                      <span>- ₹{selectedDoctorObj.originalPrice || 650}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-200 mt-2">
+                      <span>Amount Payable Now</span>
+                      <span className="text-[#145c43] text-base">₹0 (FREE)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={confirmAndLaunchWhatsApp}
+                    className="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#25d366] px-6 text-sm font-bold text-white shadow-lg hover:bg-[#20ba59] active:scale-[0.99]"
+                  >
+                    <MessageCircle size={18} />
+                    <span>Confirm & Connect on WhatsApp (Free)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="w-full text-center text-xs font-semibold text-slate-500 hover:text-slate-800"
+                  >
+                    Edit details
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </Container>
       </main>
 
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }
-
-export default Appointment;

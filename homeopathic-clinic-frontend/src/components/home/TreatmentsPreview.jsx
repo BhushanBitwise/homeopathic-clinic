@@ -12,7 +12,12 @@ function TreatmentsPreview() {
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <SectionHeading
             eyebrow="Areas of care"
-            title="Personalized care for different needs."
+            title={
+              <>
+                Personalized care for{" "}
+                <em className="italic font-normal text-[#58745e]">different needs</em>.
+              </>
+            }
             description="Explore the areas where our consultation-led approach can help you better understand your individual concerns."
           />
 

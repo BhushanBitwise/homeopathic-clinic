@@ -1,19 +1,31 @@
-
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Award,
+  CheckCircle2,
+  Clock,
+  Gift,
+  Languages,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Search,
+  Sparkles,
+  Star,
+  Video,
+  X,
+} from "lucide-react";
 
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import WhatsAppButton from "../components/common/WhatsAppButton";
 import Container from "../components/common/Container";
+import ConsultationModal from "../components/common/ConsultationModal";
 
-import doctors from "../data/doctors";
-
-const DESKTOP_PAGE_SIZE = 9;
-const MOBILE_PAGE_SIZE = 6;
+import doctors, { featuredCities } from "../data/doctors";
 
 const selectClass =
-  "min-h-12 w-full min-w-0 rounded-xl border border-slate-200 bg-[#f8faf8] px-3 text-sm text-slate-700 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-700/10";
+  "min-h-11 w-full min-w-0 rounded-2xl border border-slate-200 bg-[#f8faf8] px-3.5 text-xs sm:text-sm font-semibold text-slate-700 outline-none transition focus:border-[#145c43] focus:bg-white focus:ring-2 focus:ring-emerald-700/10";
 
 function getInitials(name = "") {
   return name
@@ -26,424 +38,420 @@ function getInitials(name = "") {
     .toUpperCase();
 }
 
-function getExperienceYears(experience = "") {
-  return Number(String(experience).match(/\d+/)?.[0] || 0);
-}
-
-const DoctorCard = memo(function DoctorCard({ doctor }) {
+const DoctorMarketplaceCard = memo(function DoctorMarketplaceCard({
+  doctor,
+  onConsult,
+}) {
   const [imageFailed, setImageFailed] = useState(false);
+  const isTopDoctor = doctor.rankInCity === 1;
 
   return (
-    <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-colors duration-150 hover:border-emerald-800/25">
-      {/* Portrait image: gives the face and shoulders more room */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#e7f2eb]">
-        {!imageFailed && doctor.image ? (
-          <img
-            src={doctor.image}
-            alt={doctor.name}
-            width="600"
-            height="750"
-            loading="lazy"
-            decoding="async"
-            onError={() => setImageFailed(true)}
-            className="block h-full w-full object-cover"
-            style={{
-              objectPosition: doctor.objectPosition || "center 20%",
-            }}
-          />
-        ) : (
-          <div
-            className="flex h-full flex-col items-center justify-center gap-3 text-emerald-900"
-            role="img"
-            aria-label={`Image unavailable for ${doctor.name}`}
-          >
-            <span className="grid size-16 place-items-center rounded-full bg-white text-2xl font-semibold">
-              {getInitials(doctor.name)}
-            </span>
-            <span className="text-sm font-medium">
-              Doctor profile
+    <article
+      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+        isTopDoctor
+          ? "border-amber-400/60 shadow-md ring-1 ring-amber-400/30"
+          : "border-slate-200/80 hover:border-emerald-700/30 shadow-xs"
+      }`}
+    >
+      <div>
+        {/* Top Portrait & Ribbons */}
+        <div className="relative aspect-[4/3.8] overflow-hidden bg-slate-100">
+          {!imageFailed && doctor.image ? (
+            <img
+              src={doctor.image}
+              alt={doctor.name}
+              loading="lazy"
+              onError={() => setImageFailed(true)}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-emerald-900 to-teal-950 text-white">
+              <span className="grid size-14 place-items-center rounded-full bg-white/10 text-xl font-bold">
+                {getInitials(doctor.name)}
+              </span>
+            </div>
+          )}
+
+          {/* Top Ribbons */}
+          <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+            {isTopDoctor ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-950 shadow-md">
+                <Award size={12} />
+                #1 in {doctor.city}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-slate-950/75 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-200 backdrop-blur-sm">
+                #{doctor.rankInCity || 1} in {doctor.city}
+              </span>
+            )}
+          </div>
+
+          {/* Online status indicator */}
+          <div className="absolute right-3 top-3">
+            {doctor.isOnline ? (
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-slate-950/80 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300 backdrop-blur-md">
+                <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Online
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-slate-950/80 px-2 py-0.5 text-[10px] font-medium text-white/60 backdrop-blur-md">
+                <Clock size={10} />
+                Wait {doctor.waitMinutes || 10}m
+              </span>
+            )}
+          </div>
+
+          {/* Free 1st consultation voucher badge */}
+          <div className="absolute bottom-2.5 left-3">
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-slate-950 shadow-sm">
+              <Sparkles size={11} className="fill-slate-950" />
+              1st 5-Min Free
             </span>
           </div>
-        )}
-
-        {doctor.qualification && (
-          <span className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] truncate rounded-full border border-white/70 bg-white/95 px-3 py-1.5 text-xs font-semibold text-emerald-900">
-            {doctor.qualification}
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.1em] leading-5 text-emerald-800">
-          {doctor.role}
-        </p>
-
-        <h2 className="mt-2 break-words text-xl font-semibold tracking-tight text-slate-950">
-          {doctor.name}
-        </h2>
-
-        {doctor.specialization && (
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            {doctor.specialization}
-          </p>
-        )}
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          {doctor.experience && (
-            <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-900">
-              {doctor.experience}
-            </span>
-          )}
-
-          {doctor.availability && (
-            <span className="rounded-full bg-[#f1f4f1] px-3 py-1.5 text-xs text-slate-600">
-              {doctor.availability}
-            </span>
-          )}
         </div>
 
-        {doctor.bio && (
-          <p className="mt-4 text-sm leading-6 text-slate-500">
-            {doctor.bio}
-          </p>
-        )}
+        {/* Card Body */}
+        <div className="p-4 sm:p-5">
+          {/* Rating, Consultations count & City */}
+          <div className="flex items-center justify-between text-xs">
+            <span className="flex items-center gap-1 font-bold text-amber-500">
+              <Star size={13} className="fill-amber-400 text-amber-400" />
+              {doctor.rating}
+              <span className="font-normal text-slate-400">
+                ({doctor.reviewsCount || "1,200+"})
+              </span>
+            </span>
 
-        <Link
-          to="/appointment"
-          className="mt-auto mt-5 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#145c43] px-4 py-3 text-center text-sm font-semibold text-white transition-colors duration-150 hover:bg-[#104b37] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
-        >
-          Book an appointment
-          <span aria-hidden="true">→</span>
-        </Link>
+            <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-800">
+              <MapPin size={11} />
+              {doctor.city}
+            </span>
+          </div>
+
+          {/* Doctor Name & Degree */}
+          <div className="mt-2.5">
+            <h3 className="text-lg font-bold tracking-tight text-slate-950 group-hover:text-[#145c43] transition-colors">
+              {doctor.name}
+            </h3>
+            <p className="text-xs font-semibold text-emerald-800 truncate">
+              {doctor.qualification}
+            </p>
+          </div>
+
+          {/* Role / Title */}
+          <p className="mt-1 text-xs text-slate-500 line-clamp-1">
+            {doctor.role}
+          </p>
+
+          {/* Specialization snippet */}
+          <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-2 bg-[#f8faf8] p-2 rounded-xl border border-slate-100">
+            {doctor.specialization}
+          </p>
+
+          {/* Experience, Consults & Languages */}
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+            <span className="rounded-md bg-emerald-50 px-2 py-0.5 font-bold text-emerald-900 border border-emerald-100">
+              {doctor.experience}
+            </span>
+            <span>·</span>
+            <span>{doctor.totalConsultations} consults</span>
+          </div>
+
+          <div className="mt-2 flex items-center gap-1 text-[11px] text-slate-500 truncate">
+            <Languages size={12} className="shrink-0 text-slate-400" />
+            <span className="truncate">{doctor.languages?.join(", ")}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing & Astrotalk Actions */}
+      <div className="p-4 sm:p-5 pt-0">
+        <div className="border-t border-slate-100 pt-3">
+          <div className="flex items-center justify-between text-xs">
+            <div>
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                Session Fee
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-[#145c43] text-sm">FREE (₹0)</span>
+                <span className="text-[11px] line-through text-slate-400">
+                  ₹{doctor.originalPrice || 650}
+                </span>
+              </div>
+            </div>
+            <span className="text-[11px] text-slate-500">
+              then ₹{doctor.chatPrice || 15}/min
+            </span>
+          </div>
+
+          {/* Actions: Chat & Video */}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => onConsult(doctor, "chat")}
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-emerald-800/20 bg-emerald-50 py-2.5 text-xs font-bold text-[#145c43] transition hover:bg-[#145c43] hover:text-white active:scale-95"
+            >
+              <MessageCircle size={14} />
+              <span>Chat Free</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onConsult(doctor, "call")}
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-[#145c43] py-2.5 text-xs font-bold text-white transition hover:bg-[#0e4532] active:scale-95 shadow-xs"
+            >
+              <Video size={14} />
+              <span>Video Meet</span>
+            </button>
+          </div>
+        </div>
       </div>
     </article>
   );
 });
 
-function Pagination({ currentPage, totalPages, onPageChange }) {
-  const pages = useMemo(() => {
-    const visiblePages = new Set([
-      1,
-      totalPages,
-      currentPage - 1,
-      currentPage,
-      currentPage + 1,
-    ]);
-
-    return [...visiblePages]
-      .filter((page) => page >= 1 && page <= totalPages)
-      .sort((a, b) => a - b);
-  }, [currentPage, totalPages]);
-
-  if (totalPages <= 1) return null;
-
-  const buttonClass =
-    "inline-flex min-h-11 items-center justify-center rounded-full border px-3 sm:px-4 text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
-
-  return (
-    <nav
-      aria-label="Doctor pagination"
-      className="mt-8 flex flex-wrap items-center justify-center gap-2"
-    >
-      <button
-        type="button"
-        disabled={currentPage === 1}
-        onClick={() => onPageChange(currentPage - 1)}
-        className={`${buttonClass} border-slate-200 bg-white text-slate-700 hover:bg-emerald-50`}
-      >
-        Previous
-      </button>
-
-      {pages.map((page, index) => {
-        const previousPage = pages[index - 1];
-        const showEllipsis =
-          previousPage && page - previousPage > 1;
-        const active = page === currentPage;
-
-        return (
-          <span key={page} className="flex items-center gap-2">
-            {showEllipsis && (
-              <span aria-hidden="true" className="text-slate-400">
-                …
-              </span>
-            )}
-
-            <button
-              type="button"
-              aria-label={`Go to page ${page}`}
-              aria-current={active ? "page" : undefined}
-              onClick={() => onPageChange(page)}
-              className={`${buttonClass} ${
-                active
-                  ? "border-[#145c43] bg-[#145c43] text-white"
-                  : "border-slate-200 bg-white text-slate-700 hover:bg-emerald-50"
-              }`}
-            >
-              {page}
-            </button>
-          </span>
-        );
-      })}
-
-      <button
-        type="button"
-        disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
-        className={`${buttonClass} border-slate-200 bg-white text-slate-700 hover:bg-emerald-50`}
-      >
-        Next
-      </button>
-    </nav>
-  );
-}
-
 export default function Doctor() {
   const [search, setSearch] = useState("");
-  const [specialization, setSpecialization] = useState("all");
-  const [sortBy, setSortBy] = useState("name");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DESKTOP_PAGE_SIZE);
+  const [selectedCity, setSelectedCity] = useState("all");
+  const [specialtyFilter, setSpecialtyFilter] = useState("all");
+  const [onlyOnline, setOnlyOnline] = useState(false);
+  const [sortBy, setSortBy] = useState("rating");
 
-  // Adapt pagination to viewport size.
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 639px)");
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [modalMode, setModalMode] = useState("chat");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const updatePageSize = () => {
-      setPageSize(
-        mediaQuery.matches ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE
-      );
-    };
+  const handleOpenConsultation = (doctor, mode = "chat") => {
+    setSelectedDoctor(doctor);
+    setModalMode(mode);
+    setIsModalOpen(true);
+  };
 
-    updatePageSize();
-    mediaQuery.addEventListener("change", updatePageSize);
-
-    return () => {
-      mediaQuery.removeEventListener("change", updatePageSize);
-    };
+  // Extract all unique specialties
+  const specialties = useMemo(() => {
+    const set = new Set();
+    doctors.forEach((d) => {
+      d.specialties?.forEach((s) => set.add(s));
+    });
+    return Array.from(set).sort();
   }, []);
 
-  const specializations = useMemo(
-    () =>
-      [
-        ...new Set(
-          doctors
-            .map((doctor) => doctor.specialization)
-            .filter(Boolean)
-        ),
-      ].sort(),
-    []
-  );
-
+  // Filtered & Sorted Doctors
   const filteredDoctors = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const q = search.trim().toLowerCase();
 
-    const result = doctors.filter((doctor) => {
-      const searchableText = [
-        doctor.name,
-        doctor.qualification,
-        doctor.role,
-        doctor.specialization,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+    const result = doctors.filter((doc) => {
+      // City filter
+      if (selectedCity !== "all" && doc.citySlug !== selectedCity) {
+        return false;
+      }
 
-      const matchesSearch = searchableText.includes(query);
-      const matchesSpecialization =
-        specialization === "all" ||
-        doctor.specialization === specialization;
+      // Online filter
+      if (onlyOnline && !doc.isOnline) {
+        return false;
+      }
 
-      return matchesSearch && matchesSpecialization;
+      // Specialty filter
+      if (
+        specialtyFilter !== "all" &&
+        !doc.specialties?.some((s) =>
+          s.toLowerCase().includes(specialtyFilter.toLowerCase())
+        )
+      ) {
+        return false;
+      }
+
+      // Search query
+      if (q) {
+        const text = [
+          doc.name,
+          doc.city,
+          doc.qualification,
+          doc.role,
+          doc.specialization,
+          ...(doc.specialties || []),
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        if (!text.includes(q)) return false;
+      }
+
+      return true;
     });
 
-    if (sortBy === "experience") {
-      return result.sort(
-        (a, b) =>
-          getExperienceYears(b.experience) -
-          getExperienceYears(a.experience)
-      );
-    }
+    // Sorting
+    return result.sort((a, b) => {
+      if (sortBy === "rating") {
+        return b.rating - a.rating;
+      }
+      if (sortBy === "experience") {
+        return (b.experienceYears || 0) - (a.experienceYears || 0);
+      }
+      if (sortBy === "cityRank") {
+        return (a.rankInCity || 10) - (b.rankInCity || 10);
+      }
+      return (a.name || "").localeCompare(b.name || "");
+    });
+  }, [search, selectedCity, specialtyFilter, onlyOnline, sortBy]);
 
-    return result.sort((a, b) =>
-      (a.name || "").localeCompare(b.name || "")
-    );
-  }, [search, specialization, sortBy]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredDoctors.length / pageSize)
-  );
-
-  const safePage = Math.min(currentPage, totalPages);
-  const startIndex = (safePage - 1) * pageSize;
-
-  const visibleDoctors = useMemo(
-    () => filteredDoctors.slice(startIndex, startIndex + pageSize),
-    [filteredDoctors, startIndex, pageSize]
-  );
-
-  const hasActiveFilters =
-    search.trim() !== "" ||
-    specialization !== "all" ||
-    sortBy !== "name";
-
-  function handleSearch(value) {
-    setSearch(value);
-    setCurrentPage(1);
-  }
-
-  function handleSpecialization(value) {
-    setSpecialization(value);
-    setCurrentPage(1);
-  }
-
-  function handleSort(value) {
-    setSortBy(value);
-    setCurrentPage(1);
-  }
-
-  function resetFilters() {
+  const resetFilters = () => {
     setSearch("");
-    setSpecialization("all");
-    setSortBy("name");
-    setCurrentPage(1);
-  }
+    setSelectedCity("all");
+    setSpecialtyFilter("all");
+    setOnlyOnline(false);
+    setSortBy("rating");
+  };
 
   return (
     <div className="min-h-screen overflow-x-clip bg-[#f8faf8]">
       <Navbar />
 
-      <main className="pt-24 sm:pt-28">
-        {/* Heading */}
-        <section className="border-b border-slate-200 bg-white py-12 sm:py-16 lg:py-20">
+      <main className="pt-20 sm:pt-24">
+        {/* Header Hero */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#f4f9f6] border-b border-slate-200/80 py-12 sm:py-16">
           <Container>
+            {/* Offer Callout */}
+            <div className="mx-auto max-w-fit flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-xs font-bold text-amber-900 shadow-xs mb-4">
+              <Gift size={15} className="text-amber-600 animate-bounce" />
+              <span>Launch Offer: First 5-Minute Consultation is 100% FREE (₹0)</span>
+            </div>
+
             <div className="mx-auto max-w-3xl text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-800 sm:text-sm">
-                HealingCare · Our team
-              </p>
-
-              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-6xl">
-                Meet our doctors.
-                <span className="mt-1 block text-emerald-800">
-                  Care starts with listening.
-                </span>
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-950">
+                India&apos;s Top 5 Homeopaths{" "}
+                <em className="italic font-bold text-[#145c43]">by City</em>
               </h1>
-
-              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-                Explore doctor profiles and consultation information.
-                Contact the clinic to confirm availability.
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                Find the highest-rated homeopathic doctors in Pune (featuring Dr. Pranita Kanade), Mumbai, Delhi NCR, Bengaluru, Hyderabad, Kolkata, and Chennai. Chat or take a video call now.
               </p>
+            </div>
+
+            {/* Astrotalk-style City Filter Quick Pills */}
+            <div className="mt-8 flex items-center justify-center">
+              <div className="flex max-w-full items-center gap-2 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCity("all")}
+                  className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                    selectedCity === "all"
+                      ? "bg-[#145c43] text-white shadow-xs"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  All Cities
+                </button>
+                {featuredCities.map((c) => (
+                  <button
+                    key={c.slug}
+                    type="button"
+                    onClick={() => setSelectedCity(c.slug)}
+                    className={`rounded-xl px-4 py-2 text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
+                      selectedCity === c.slug
+                        ? "bg-[#145c43] text-white shadow-xs"
+                        : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    <span>{c.name}</span>
+                    {c.slug === "pune" && (
+                      <span className="rounded bg-amber-400 px-1 py-0.2 text-[9px] font-extrabold text-slate-950">
+                        Dr. Pranita
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </Container>
         </section>
 
-        {/* Search and filters */}
-        <section className="py-7 sm:py-9">
+        {/* Filter Toolbar */}
+        <section className="py-6 sm:py-8">
           <Container>
-            <div className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-6">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(190px,0.55fr)_minmax(180px,0.45fr)]">
-                {/* Rounded wrapper owns the focus ring; no hover styling */}
-                <div className="flex min-h-12 min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-[#f8faf8] px-4 focus-within:border-emerald-700 focus-within:ring-4 focus-within:ring-emerald-700/10">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="size-5 shrink-0 text-emerald-800"
-                  >
-                    <circle
-                      cx="11"
-                      cy="11"
-                      r="7"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                    />
-                    <path
-                      d="m16 16 4 4"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-
-                  <label htmlFor="doctor-search" className="sr-only">
-                    Search doctors
-                  </label>
-
+            <div className="rounded-3xl border border-slate-200/90 bg-white p-4 shadow-sm sm:p-5">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {/* Search box */}
+                <div className="relative">
+                  <Search size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
                   <input
-                    id="doctor-search"
                     type="search"
                     value={search}
-                    onChange={(event) => handleSearch(event.target.value)}
-                    placeholder="Search doctors..."
-                    autoComplete="off"
-                    spellCheck={false}
-                    className="!m-0 !min-w-0 !w-full !flex-1 !rounded-none !border-0 !bg-transparent !px-0 !py-3 !shadow-none text-sm text-slate-900 placeholder:text-slate-400 !outline-none !ring-0 focus:!border-0 focus:!outline-none focus:!ring-0 focus:!shadow-none"
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search doctor, city, concern..."
+                    className="w-full rounded-2xl border border-slate-200 bg-[#f8faf8] py-2.5 pl-10 pr-8 text-xs sm:text-sm font-medium text-slate-900 outline-none transition focus:border-[#145c43] focus:bg-white"
                   />
-
                   {search && (
                     <button
                       type="button"
-                      onClick={() => handleSearch("")}
-                      aria-label="Clear search"
-                      className="shrink-0 rounded-lg px-2 py-1.5 text-xs font-semibold text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+                      onClick={() => setSearch("")}
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-700"
                     >
-                      Clear
+                      <X size={14} />
                     </button>
                   )}
                 </div>
 
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-xs font-semibold text-slate-600">
-                    Specialization
-                  </span>
+                {/* Specialty dropdown */}
+                <div>
                   <select
-                    value={specialization}
-                    onChange={(event) =>
-                      handleSpecialization(event.target.value)
-                    }
+                    value={specialtyFilter}
+                    onChange={(e) => setSpecialtyFilter(e.target.value)}
                     className={selectClass}
                   >
-                    <option value="all">All specializations</option>
-                    {specializations.map((item) => (
-                      <option key={item} value={item}>
-                        {item}
+                    <option value="all">All Specialties</option>
+                    {specialties.map((spec) => (
+                      <option key={spec} value={spec}>
+                        {spec}
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
 
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-xs font-semibold text-slate-600">
-                    Sort by
-                  </span>
+                {/* Sort dropdown */}
+                <div>
                   <select
                     value={sortBy}
-                    onChange={(event) => handleSort(event.target.value)}
+                    onChange={(e) => setSortBy(e.target.value)}
                     className={selectClass}
                   >
-                    <option value="name">Name (A–Z)</option>
-                    <option value="experience">
-                      Experience (highest first)
-                    </option>
+                    <option value="rating">Highest Rated (4.9★ first)</option>
+                    <option value="cityRank">City Rank (#1 first)</option>
+                    <option value="experience">Experience (Years)</option>
+                    <option value="name">Doctor Name (A–Z)</option>
                   </select>
-                </label>
+                </div>
+
+                {/* Online toggle */}
+                <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-[#f8faf8] px-4 py-2">
+                  <span className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                    <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Online Now Only
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={onlyOnline}
+                    onChange={(e) => setOnlyOnline(e.target.checked)}
+                    className="size-4 accent-[#145c43] cursor-pointer"
+                  />
+                </div>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                <p className="text-sm text-slate-500" aria-live="polite">
-                  <span className="font-semibold text-slate-950">
-                    {filteredDoctors.length}
-                  </span>{" "}
-                  {filteredDoctors.length === 1 ? "doctor" : "doctors"} found
+              {/* Status bar */}
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
+                <p>
+                  Showing <strong className="text-slate-900 font-bold">{filteredDoctors.length}</strong> top-rated homeopathic doctors
+                  {selectedCity !== "all" && (
+                    <span> in <strong className="text-[#145c43] capitalize">{selectedCity}</strong></span>
+                  )}
                 </p>
 
-                {hasActiveFilters && (
+                {(search || selectedCity !== "all" || specialtyFilter !== "all" || onlyOnline) && (
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="inline-flex min-h-10 items-center rounded-full border border-emerald-800/15 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                    className="font-bold text-[#145c43] hover:underline"
                   >
-                    Reset filters
+                    Reset all filters
                   </button>
                 )}
               </div>
@@ -451,112 +459,47 @@ export default function Doctor() {
           </Container>
         </section>
 
-        {/* Responsive doctor cards */}
-        <section className="pb-14 sm:pb-20">
+        {/* Doctors Grid */}
+        <section className="pb-20 sm:pb-28">
           <Container>
-            {visibleDoctors.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-                  {visibleDoctors.map((doctor) => (
-                    <DoctorCard key={doctor.id} doctor={doctor} />
-                  ))}
-                </div>
-
-                <p className="mt-6 text-center text-xs text-slate-500">
-                  Showing {startIndex + 1}–
-                  {Math.min(
-                    startIndex + pageSize,
-                    filteredDoctors.length
-                  )}{" "}
-                  of {filteredDoctors.length} doctors
-                </p>
-
-                <Pagination
-                  currentPage={safePage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </>
+            {filteredDoctors.length > 0 ? (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredDoctors.map((doc) => (
+                  <DoctorMarketplaceCard
+                    key={doc.id}
+                    doctor={doc}
+                    onConsult={handleOpenConsultation}
+                  />
+                ))}
+              </div>
             ) : (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-14 text-center sm:px-8">
-                <div className="mx-auto grid size-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-800">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="size-6"
-                  >
-                    <circle
-                      cx="11"
-                      cy="11"
-                      r="7"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                    />
-                    <path
-                      d="m16 16 4 4"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </div>
-
-                <h2 className="mt-4 text-xl font-semibold text-slate-950">
-                  No doctors found
-                </h2>
-
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  Try another search term or change the specialization.
-                </p>
-
+              <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center">
+                <Search size={32} className="mx-auto text-slate-300" />
+                <h3 className="mt-3 text-lg font-bold text-slate-800">No doctors match your criteria</h3>
+                <p className="mt-1 text-xs text-slate-500">Try changing the city or resetting filters.</p>
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="mt-5 min-h-11 rounded-full bg-[#145c43] px-5 py-3 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+                  className="mt-4 rounded-full bg-[#145c43] px-5 py-2 text-xs font-bold text-white"
                 >
-                  Clear filters
+                  Reset Filters
                 </button>
               </div>
             )}
-          </Container>
-        </section>
-
-        {/* Appointment CTA */}
-        <section className="pb-14 sm:pb-20">
-          <Container>
-            <div className="rounded-3xl bg-[#12372a] px-5 py-10 text-center sm:rounded-[2rem] sm:px-12 sm:py-14">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-200 sm:text-sm">
-                Your next step
-              </p>
-
-              <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Ready to arrange a consultation?
-              </h2>
-
-              <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-emerald-50/75 sm:text-base">
-                Contact the clinic to confirm doctor availability and
-                appointment details.
-              </p>
-
-              <Link
-                to="/appointment"
-                className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-emerald-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12372a]"
-              >
-                Book an appointment →
-              </Link>
-            </div>
           </Container>
         </section>
       </main>
 
       <Footer />
       <WhatsAppButton />
+
+      {/* Consultation Modal */}
+      <ConsultationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        doctor={selectedDoctor}
+        initialMode={modalMode}
+      />
     </div>
   );
 }
-
-
-
-
-

@@ -55,7 +55,12 @@ function LocationsPreview() {
         {/* Heading */}
         <SectionHeading
           eyebrow="Locations"
-          title="Homeopathy care, closer to you."
+          title={
+            <>
+              Homeopathy care,{" "}
+              <em className="italic font-normal text-[#58745e]">closer to you</em>.
+            </>
+          }
           description="Explore consultation information for cities across Maharashtra and selected locations across India."
         />
 
